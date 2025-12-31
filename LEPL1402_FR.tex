@@ -4039,6 +4039,8 @@ public class LinkedStack<T> implements Stack<T> {
 
 Toutes les opérations de pile sont en temps \(\mathcal{O}(1)\).
 
+L’état de la pile chaînée après avoir empilé 1, 5 et 3 dans cet ordre est illustré dans la figure suivante.
+
 \subsubsection*{Implémentation par tableau dynamique}
 
 \begin{lstlisting}[language=Java]
@@ -4100,25 +4102,93 @@ Les opérations sont \(\mathcal{O}(1)\) en temps amorti grâce au redimensionnem
 
 \subsubsection*{Évaluation d’expressions avec deux piles}
 
-On peut évaluer une expression entièrement parenthésée à l’aide :
+Une utilisation typique des piles est l’évaluation d’expressions arithmétiques, comme dans l’algorithme suivant :
+
+\begin{lstlisting}[language=Java]
+public class ArithmeticExpression {
+
+    public static void main(String[] args) {
+        System.out.println(evaluate("( ( 2 * ( 3 + 5 ) ) / 4 )"));
+    }
+
+    public static double evaluate(String expression) {
+        Stack<String> ops = new LinkedStack<String>();
+        Stack<Double> vals = new LinkedStack<Double>();
+
+        for (String s : expression.split(" ")) {
+            // INVARIANT
+            if (s.equals("(")) ;
+            else if (s.equals("+")) ops.push(s);
+            else if (s.equals("-")) ops.push(s);
+            else if (s.equals("*")) ops.push(s);
+            else if (s.equals("/")) ops.push(s);
+            else if (s.equals(")")) {
+                String op = ops.pop();
+                double v = vals.pop();
+                if (op.equals("+")) v = vals.pop() + v;
+                else if (op.equals("-")) v = vals.pop() - v;
+                else if (op.equals("*")) v = vals.pop() * v;
+                else if (op.equals("/")) v = vals.pop() / v;
+                vals.push(v);
+            } else {
+                vals.push(Double.parseDouble(s));
+            }
+        }
+        return vals.pop();
+    }
+}
+\end{lstlisting}
+
+La complexité temporelle de l’algorithme est clairement \(\mathcal{O}(n)\), où \(n\) est la taille de la chaîne d’entrée :
+chaque jeton (qu’il s’agisse d’un nombre, d’un opérateur ou d’une parenthèse) est lu et traité exactement une fois.
 
 \begin{itemize}
-  \item d’une pile d’opérateurs (\texttt{ops}),
-  \item d’une pile de valeurs (\texttt{vals}).
+  \item Empiler et dépiler des éléments d’une pile prend un temps constant, \(\mathcal{O}(1)\).
+  \item Les opérations arithmétiques (addition, soustraction, multiplication et division) sont effectuées en temps
+        constant, \(\mathcal{O}(1)\).
 \end{itemize}
 
-Idée : à chaque \texttt{")"}, on dépile un opérateur et les deux dernières valeurs, on applique, et on réempile le
-résultat. La complexité est \(\mathcal{O}(n)\).
+Pour comprendre et se convaincre de la correction de l’algorithme, on peut chercher un invariant. On peut voir qu’une
+expression entièrement parenthésée peut être représentée comme un arbre binaire sans parenthèses : les noeuds internes
+sont les opérateurs et les feuilles sont les valeurs. L’algorithme utilise deux piles. Une pile (\texttt{ops}) est
+dédiée aux opérateurs et l’autre (\texttt{vals}) aux valeurs (réduites). Le programme découpe la chaîne d’entrée
+\texttt{args[0]} par espaces afin de traiter chaque jeton individuellement. Nous ne formalisons pas complètement
+l’invariant ici, mais en donnons l’intuition. À tout instant pendant le traitement de l’expression :
 
-L’invariant informel :
+\begin{enumerate}
+  \item la pile \texttt{vals} contient les résultats de toutes les sous-expressions entièrement évaluées (sous-arbres
+        réduits) rencontrées jusqu’ici ;
+  \item la pile \texttt{ops} contient les opérateurs qui attendent leur opérande droit pour former une sous-expression
+        (sous-arbre) complète pouvant être réduite ;
+  \item pour chaque opérateur dans \texttt{ops}, son opérande gauche correspondant est déjà dans \texttt{vals}, en
+        attente que son sous-arbre soit complété et réduit.
+\end{enumerate}
 
-\begin{itemize}
-  \item \texttt{vals} contient les valeurs (ou sous-résultats) des sous-expressions déjà complètement évaluées ;
-  \item \texttt{ops} contient les opérateurs en attente de leur opérande droit.
-\end{itemize}
+La figure montre l’état des piles à trois étapes distinctes de notre exemple succinct.
 
-\paragraph{Exercice.} Écrire une version récursive qui évalue une expression parenthésée en s’appuyant sur la pile
-d’appels plutôt que sur des piles explicites.
+Lorsqu’on rencontre un opérande, c’est comme rencontrer une feuille de cet arbre, et sa valeur est connue
+immédiatement ; elle est donc empilée dans \texttt{vals}. Lorsqu’on rencontre un opérateur, il est empilé dans
+\texttt{ops}. Cet opérateur attend son opérande droit pour former un sous-arbre complet ; son opérande gauche est déjà
+sur \texttt{vals}. Lorsqu’une parenthèse fermante \texttt{")"} est rencontrée, cela indique la fin d’une sous-expression
+entièrement parenthésée, correspondant à un sous-arbre entier de l’expression. Ce sous-arbre est « réduit » ou
+« évalué » de la manière suivante :
+
+\begin{enumerate}
+  \item l’opérateur correspondant à ce sous-arbre est dépilé de \texttt{ops} ;
+  \item l’opérande droit (valeur du sous-arbre droit) est dépilé de \texttt{vals} ;
+  \item l’opérande gauche (valeur du sous-arbre gauche) est dépilé de \texttt{vals} ;
+  \item l’opérateur est appliqué aux deux opérandes et le résultat (valeur du sous-arbre entier) est repoussé dans
+        \texttt{vals}.
+\end{enumerate}
+
+Cet invariant capture l’essence de l’approche de l’algorithme : il parcourt l’arbre d’expression d’une sorte de manière
+en profondeur, évaluant chaque sous-arbre dès qu’il est complètement identifié par sa parenthèse fermante. Cet
+algorithme qui prend une \texttt{String} en entrée est un exemple d’interpréteur. Les langages de programmation
+interprétés (comme Python) font de même mais acceptent des constructions légèrement plus complexes que les expressions
+arithmétiques parenthésées.
+
+\paragraph{Exercice.} Écrire un algorithme récursif d’évaluation d’expressions arithmétiques. Ce programme n’utilisera
+pas de piles explicites, mais s’appuiera sur la pile d’appels.
 
 %------------------------------------------------------------
 \subsection{Arbres}
