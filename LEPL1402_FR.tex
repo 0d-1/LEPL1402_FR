@@ -1768,133 +1768,57 @@ ajoute automatiquement un \texttt{finally} et l'appel à \texttt{close()}.
 
 
 
-Les programmes informatiques consistent à organiser des données et à travailler
-avec ces données. Dans certaines applications, les types primitifs, les
-tableaux et les chaînes suffisent, mais on rencontre souvent des données plus
-complexes. Par exemple, imaginons un programme qui gère des employés d'une
-entreprise. Nous pouvons décrire le fait que chaque employé a un nom et un
-salaire en définissant une nouvelle \emph{classe} :
+Jusqu’ici, nous avons surtout utilisé :
 
-\begin{lstlisting}[language=Java]
-class Employee {
-    String name;  // le nom de l'employe
-    int salary;   // le salaire de l'employe
-}
-\end{lstlisting}
+\begin{itemize}
+  \item des types primitifs (\texttt{int}, \texttt{double}, \dots),
+  \item des tableaux,
+  \item la classe \texttt{String}.
+\end{itemize}
 
-Les classes permettent de créer des \emph{objets}. Dans notre exemple, chaque
-objet de la classe \texttt{Employee} représente un employé, ce qui facilite
-l'organisation des données :
+En Java, nous pouvons définir nos \emph{propres} types d’objets à l’aide de classes.  
+Considérons par exemple des employé·e·s décrits par un nom et un salaire :
 
 \begin{lstlisting}[language=Java]
 class Employee {
     String name;
     int salary;
 }
+\end{lstlisting}
 
+Nous pouvons alors créer et manipuler ces objets :
+
+\begin{lstlisting}[language=Java]
 public class Main {
     public static void main(String[] args) {
-        Employee person1 = new Employee();
-        // un nouvel objet !
-        person1.name = "Peter";
-        person1.salary = 42000;
+        Employee anna = new Employee();
+        anna.name = "Anna";
+        anna.salary = 45000;
 
-        Employee person2 = new Employee();
-        // un nouvel objet !
-        person2.name = "Anna";
-        person2.salary = 45000;
+        Employee peter = new Employee();
+        peter.name = "Peter";
+        peter.salary = 45000;
 
-        int salaryDifference = person1.salary - person2.salary;
-        System.out.println("The salary difference is " + salaryDifference);
+        System.out.println(anna.name + " earns " + anna.salary);
+        System.out.println(peter.name + " earns " + peter.salary);
     }
 }
 \end{lstlisting}
 
-Les deux objets que nous avons créés et placés dans les variables locales
-\texttt{person1} et \texttt{person2} sont appelés des \emph{instances} de la
-classe \texttt{Employee}. Les variables \texttt{name} et \texttt{salary} sont
-des \emph{variables d'instance} : comme elles ne sont pas \texttt{static},
-elles appartiennent aux instances, et chaque instance possède son propre
-\texttt{name} et son propre \texttt{salary}.
+Chaque objet possède ses \emph{propres} variables d’instance. Si nous augmentons le salaire d’Anna, cela ne modifie pas celui de Peter, car ce sont deux objets distincts.
 
 \subsection{Initialiser les objets}
 
 
 
-Dans l'exemple précédent, nous avons d'abord créé l'objet, puis défini les
-valeurs de ses variables d'instance :
+Par défaut, en Java :
 
-\begin{lstlisting}[language=Java]
-Employee person1 = new Employee();
-person1.name = "Peter";
-person1.salary = 42000;
-\end{lstlisting}
+\begin{itemize}
+  \item les champs numériques sont initialisés à \texttt{0},
+  \item les références (par exemple \texttt{String}) sont initialisées à \texttt{null}.
+\end{itemize}
 
-Comme les variables de classe, les variables d'instance sont automatiquement
-initialisées à \texttt{0} (pour les nombres), \texttt{false} (pour les booléens)
-ou \texttt{null} (pour les autres types). C'est dangereux si l'on oublie
-d'initialiser un champ :
-
-\begin{lstlisting}[language=Java]
-Employee person1 = new Employee();
-person1.name = "Peter";
-// oops, le salaire vaut 0
-\end{lstlisting}
-
-Il existe plusieurs manières d'éviter cela. Une solution consiste à
-initialiser la variable dans la définition de la classe :
-
-\begin{lstlisting}[language=Java]
-class Employee {
-    String name;
-    int salary = 10000;
-}
-\end{lstlisting}
-
-Bien sûr, cela n'est utile que si l'on veut que tous les employés commencent
-avec un salaire de 10000. L'autre solution consiste à définir un
-\emph{constructeur} dans votre classe. Le constructeur est une méthode spéciale
-qui porte le même nom que la classe. Il peut avoir des paramètres mais n'a pas
-de type de retour :
-
-\begin{lstlisting}[language=Java]
-class Employee {
-    String name;
-    int salary;
-
-    // le constructeur
-    Employee(String n, int s) {
-        this.name = n;
-        this.salary = s;
-    }
-}
-\end{lstlisting}
-
-Si vous fournissez un constructeur pour votre classe, le compilateur Java
-vérifiera que vous l'utilisez bien pour créer de nouveaux objets :
-
-\begin{lstlisting}[language=Java]
-Employee person1 = new Employee("Peter", 42000);
-// OK. Nous avons maintenant un nouvel employe avec
-// person1.name "Peter"
-// person1.salary 42000
-
-Employee person2 = new Employee();
-// pas autorise. Il faut utiliser le constructeur !
-\end{lstlisting}
-
-Dans notre exemple, le constructeur prenait deux paramètres \texttt{n} et
-\texttt{s} et les utilisait pour initialiser les variables d'instance
-\texttt{name} et \texttt{salary} d'un nouvel objet \texttt{Employee}. Mais
-comment le constructeur sait-il quel objet initialiser ? Devons-nous lui
-indiquer que le nouvel objet est dans la variable \texttt{person1} ?
-Heureusement, c'est plus simple : le constructeur peut toujours accéder à
-l'objet en cours de construction via le mot-clé \texttt{this}. Ainsi, la ligne
-\texttt{this.name = n;} signifie que la variable d'instance \texttt{name} du
-nouvel objet est initialisée avec la valeur du paramètre \texttt{n}.
-
-Nous pourrions même utiliser les mêmes noms pour les paramètres et les
-variables d'instance :
+Pour éviter d’oublier certaines initialisations, on utilise des \emph{constructeurs}. Un constructeur a le même nom que la classe et n’a pas de type de retour.
 
 \begin{lstlisting}[language=Java]
 class Employee {
@@ -1908,19 +1832,16 @@ class Employee {
 }
 \end{lstlisting}
 
-Comme pour les variables de classe, il faut faire attention au masquage
-(\emph{shadowing}). Sans \texttt{this.} devant le nom, le compilateur supposera
-que vous désignez le paramètre. Erreur classique :
+Le mot-clé \texttt{this} désigne l’objet courant. Il permet aussi de distinguer les paramètres des champs lorsqu’ils portent le même nom :
 
 \begin{lstlisting}[language=Java]
-class Employee {
-    String name;
-    int salary;
+Employee(String name, int salary) {
+    // Mauvais :
+    // name = name;       // ne fait que reaffecter le parametre a lui-meme
 
-    Employee(String name, int salary) {
-        name = name;     // oops, this.name n'est pas modifie
-        salary = salary; // oops, this.salary n'est pas modifie
-    }
+    // Correct :
+    this.name = name;
+    this.salary = salary;
 }
 \end{lstlisting}
 
@@ -1928,138 +1849,58 @@ class Employee {
 
 
 
-Comme les variables de tableaux ou de type \texttt{String}, les variables
-d'objets contiennent une \emph{référence} vers l'objet en mémoire. L'objet
-lui-même contient les variables d'instance. Pour l'employé \texttt{Peter}, on
-obtient la structure suivante :
-
-\begin{center}
-\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
-\textbf{Code Java} & \textbf{En mémoire pendant l'exécution} \\
-\begin{minipage}[t]{0.45\textwidth}
-\begin{lstlisting}[language=Java]
-Employee person1 = new Employee("Peter", 42000);
-\end{lstlisting}
-\end{minipage}
-&
-\begin{minipage}[t]{0.45\textwidth}
-\begin{lstlisting}
-person1 -> Employee{name="Peter", salary=42000}
-\end{lstlisting}
-\end{minipage}
-\end{tabular}
-\end{center}
-
-Pour cette raison, ce que nous avons déjà dit sur les tableaux et les chaînes
-vaut aussi pour les objets : affecter une variable d'objet à une autre variable
-ne copie que la référence. Comparer deux objets avec \texttt{==} compare leurs
-références, pas le contenu :
+Une variable de type classe ne \emph{contient} pas directement l’objet, mais une \emph{référence} vers celui-ci.
 
 \begin{lstlisting}[language=Java]
-Employee person1 = new Employee("Peter", 42000);
-Employee person2 = new Employee("Peter", 42000);
-System.out.println(person1 == person2); // false. Deux objets distincts.
+Employee anna = new Employee("Anna", 45000);
+Employee peter = new Employee("Peter", 45000);
+\end{lstlisting}
 
-Employee person3 = person1;
-System.out.println(person1 == person3); // true. Meme objet.
+Ici, \texttt{anna} et \texttt{peter} sont deux références distinctes, chacune pointant vers un objet différent en mémoire.
+
+L’opérateur \texttt{==} appliqué à des objets compare les \emph{références}, pas le contenu.
+
+\begin{lstlisting}[language=Java]
+Employee x = new Employee("Anna", 45000);
+Employee y = new Employee("Anna", 45000);
+Employee z = x;
+
+System.out.println(x == y); // false : objets distincts
+System.out.println(x == z); // true  : meme reference
 \end{lstlisting}
 
 \subsection{Travailler avec des objets}
 
 
 
-Beaucoup de choses que vous pouvez faire avec des types primitifs et des
-chaînes, vous pouvez aussi les faire avec des objets. Par exemple, vous pouvez
-créer des tableaux d'objets. Les éléments d'un nouveau tableau d'objets sont
-automatiquement initialisés à \texttt{null}, comme dans cet exemple :
+On peut créer des tableaux d’objets :
 
 \begin{lstlisting}[language=Java]
-Employee[] myTeam = new Employee[3];
-myTeam[0] = new Employee("Peter", 42000);
-myTeam[1] = new Employee("Anna", 45000);
-System.out.println(myTeam[0].name); // "Peter"
-System.out.println(myTeam[1].name); // "Anna"
-System.out.println(myTeam[2].name); // Erreur ! myTeam[2] vaut null
+Employee[] staff = new Employee[3];
+
+staff[0] = new Employee("Anna", 45000);
+staff[1] = new Employee("Peter", 45000);
+staff[2] = new Employee("John", 40000);
 \end{lstlisting}
 
-Vous pouvez aussi avoir des variables de classe ou d'instance qui sont des
-variables d'objets. Elles seront également initialisées à \texttt{null} si
-vous ne fournissez pas de valeur initiale. Dans l'exemple suivant, nous avons
-ajouté une nouvelle variable d'instance \texttt{boss} à notre \texttt{Employee} :
-
-\begin{lstlisting}[language=Java]
-class Employee {
-    String name;
-    int salary;
-    Employee boss;
-
-    Employee(String name, int salary, Employee boss) {
-        this.name = name;
-        this.salary = salary;
-        this.boss = boss;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        // Anna n'a pas de boss
-        Employee anna = new Employee("Anna", 45000, null);
-        // Anna est la boss de Peter
-        Employee peter = new Employee("Peter", 42000, anna);
-    }
-}
-\end{lstlisting}
-
-Exercice : prenez une feuille de papier et dessinez le modèle mental pour
-l'objet représentant Peter.
-
-Question : dans l'exemple ci-dessus, quelle valeur donne-t-on à la variable
-d'instance \texttt{boss} pour un employé qui n'a pas de supérieur ?
+Chaque case du tableau est une \emph{référence} vers un \texttt{Employee}.  
+Une référence non initialisée vaut \texttt{null}. Toute tentative d’utiliser une référence \texttt{null} provoque un \texttt{NullPointerException}.
 
 \subsection{Méthodes}
 
 
 
-Dans l'exemple suivant, nous définissons une méthode statique
-\texttt{increaseSalary()} pour augmenter le salaire d'un employé :
+On peut définir des méthodes \emph{statiques} externes :
 
 \begin{lstlisting}[language=Java]
-class Employee {
-    String name;
-    int salary;
-
-    Employee(String name, int salary) {
-        this.name = name;
-        this.salary = salary;
-    }
-}
-
-public class Main {
-    static void increaseSalary(Employee employee, int raise) {
-        // on augmente le salaire seulement si la hausse est < 10000
-        if (raise < 10000) {
-            employee.salary += raise;
-        }
-    }
-
-    public static void main(String[] args) {
-        Employee anna = new Employee("Anna", 45000);
-        Employee peter = new Employee("Peter", 45000);
-        // Anna et Peter reçoivent une augmentation
-        increaseSalary(anna, 2000);
-        increaseSalary(peter, 3000);
-        System.out.println("New salary of Anna is " + anna.salary);
-        System.out.println("New salary of Peter is " + peter.salary);
+static void increaseSalary(Employee employee, int raise) {
+    if (raise < 10000) {
+        employee.salary += raise;
     }
 }
 \end{lstlisting}
 
-Le code ci-dessus fonctionne. Mais en programmation orientée objet, on préfère
-généralement que toutes les méthodes qui modifient les variables d'instance
-d'un objet soient définies à l'intérieur de la classe. Dans un programme
-important, cela facilite la compréhension. Pour cela, on remplace la méthode
-statique \texttt{increaseSalary()} de \texttt{Main} par une méthode non
-statique dans la classe \texttt{Employee} :
+Mais en programmation orientée objet, il est préférable que les opérations sur un objet soient définies à \emph{l’intérieur} de sa classe :
 
 \begin{lstlisting}[language=Java]
 class Employee {
@@ -2082,38 +1923,30 @@ public class Main {
     public static void main(String[] args) {
         Employee anna = new Employee("Anna", 45000);
         Employee peter = new Employee("Peter", 45000);
-        // Anna et Peter reçoivent une augmentation
+
         anna.increaseSalary(2000);
         peter.increaseSalary(3000);
+
         System.out.println("New salary of Anna is " + anna.salary);
         System.out.println("New salary of Peter is " + peter.salary);
     }
 }
 \end{lstlisting}
 
-Comme \texttt{increaseSalary()} est maintenant une méthode non statique de
-\texttt{Employee}, nous pouvons l'appeler directement sur un objet
-\texttt{Employee}. Aucun paramètre \texttt{employee} n'est nécessaire car, à
-l'intérieur de la méthode, \texttt{this} référence l'objet sur lequel la
-méthode a été appelée. Nous écrivons donc simplement
-\texttt{anna.increaseSalary(2000)} pour modifier le salaire d'Anna.
+À l’intérieur d’une méthode d’instance, \texttt{this} référence l’objet sur lequel la méthode a été appelée.
 
 \subsection{Restreindre l’accès}
 
 
 
-L'avantage de notre méthode \texttt{increaseSalary()} est de pouvoir imposer
-une limite de 10000 euros :) Cependant, rien n'empêche un programmeur de
-l'ignorer et de modifier le salaire à la main :
+Avec le code précédent, on peut toujours contourner la logique métier :
 
 \begin{lstlisting}[language=Java]
-Employee anna = new Employee("Anna", 45000, null);
-anna.salary += 1500000; // ha !
+Employee anna = new Employee("Anna", 45000);
+anna.salary += 1_500_000; // Oups.
 \end{lstlisting}
 
-Ce genre d'erreur peut vite arriver dans un programme composé de centaines de
-classes. On peut l'éviter en déclarant la variable d'instance \texttt{salary}
-comme \texttt{private} :
+Pour protéger les données, on utilise le modificateur d’accès \texttt{private} :
 
 \begin{lstlisting}[language=Java]
 class Employee {
@@ -2133,35 +1966,12 @@ class Employee {
 }
 \end{lstlisting}
 
-Une variable d'instance \texttt{private} n'est accessible qu'à l'intérieur de
-la classe. L'accès \texttt{anna.salary += 150000} dans \texttt{Main} ne
-fonctionne donc plus. Mission accomplie...
-
-Malheureusement, cela signifie aussi que l'on ne peut plus afficher le salaire
-d'Anna via \texttt{System.out.println("New salary of Anna is " + anna.salary)}.
-Pour corriger cela, on peut ajouter une méthode \texttt{getSalary()} dont le
-seul but est de renvoyer la valeur de \texttt{salary}. Voici la nouvelle
-version :
+La variable d’instance \texttt{salary} n’est plus accessible depuis l’extérieur.  
+Pour lire sa valeur, on ajoute une méthode d’accès (\emph{getter}) :
 
 \begin{lstlisting}[language=Java]
-class Employee {
-    String name;
-    private int salary;
-
-    Employee(String name, int salary) {
-        this.name = name;
-        this.salary = salary;
-    }
-
-    void increaseSalary(int raise) {
-        if (raise < 10000) {
-            this.salary += raise;
-        }
-    }
-
-    int getSalary() {
-        return this.salary;
-    }
+int getSalary() {
+    return this.salary;
 }
 
 public class Main {
@@ -2177,10 +1987,7 @@ public class Main {
 
 
 
-Supposons que nous écrivions un jeu (par exemple un RPG). Nous implémentons les
-armes comme des objets de la classe \texttt{Weapon}. Les dégâts infligés par
-une arme dépendent de son niveau, et son prix aussi. Le code pourrait ressembler
-à ceci :
+Supposons un jeu où les armes sont représentées par une classe :
 
 \begin{lstlisting}[language=Java]
 class Weapon {
@@ -2204,503 +2011,113 @@ class Weapon {
         return this.getSimpleDamage() * 2;
     }
 }
-
-public class Main {
-    public static void main(String[] args) {
-        Weapon weapon;
-        weapon = new Weapon("Small dagger", 2);
-        System.out.println("Price is " + weapon.getPrice());
-        System.out.println("Simple damage is " + weapon.getSimpleDamage());
-        System.out.println("Double damage is " + weapon.getDoubleDamage());
-    }
-}
 \end{lstlisting}
 
-Avant de continuer, étudiez attentivement le programme ci-dessus et assurez-vous
-de le comprendre. Exécutez-le dans IntelliJ. Les choses vont se compliquer !
-
-Dans notre jeu, il existe aussi un type d'arme spécial, les \texttt{Mighty Sword}.
-Ces épées infligent toujours 1000 points de dégâts, indépendamment de leur
-niveau. En Java, on peut implémenter ce type d'arme ainsi :
+On veut maintenant une \texttt{MightySword} (épée puissante) avec des dégâts différents. On utilise \emph{extends} :
 
 \begin{lstlisting}[language=Java]
 class MightySword extends Weapon {
-    MightySword(String name, int level) {
-        super(name, level);
+
+    MightySword(int level) {
+        super("Mighty sword", level);
     }
 
     @Override
     int getSimpleDamage() {
-        return 1000;
+        return super.getSimpleDamage() + 10;
     }
 }
 \end{lstlisting}
 
-La première ligne indique que la classe \texttt{MightySword} \emph{étend} la
-classe \texttt{Weapon}. On dit que \texttt{MightySword} est une \emph{sous-classe}
-(ou \emph{sous-type}) de \texttt{Weapon}, ou encore que \texttt{Weapon} est une
-\emph{super-classe} de \texttt{MightySword}. En pratique, cela signifie que tout
-ce que l'on peut faire avec des objets \texttt{Weapon}, on peut aussi le faire
-avec des objets \texttt{MightySword} :
+Ici :
+
+\begin{itemize}
+  \item \texttt{extends} indique que \texttt{MightySword} \emph{hérite} de \texttt{Weapon},
+  \item le constructeur appelle \texttt{super(...)} pour initialiser la super-classe,
+  \item \texttt{@Override} signale que l’on redéfinit une méthode existante.
+\end{itemize}
+
+\subsection{Le mot-clé \texttt{super}}
+
+
+
+\texttt{super} permet :
+
+\begin{itemize}
+  \item d’appeler le constructeur de la super-classe,
+  \item d’accéder à une méthode ou un champ de la super-classe (\texttt{super.methode()}).
+\end{itemize}
+
+Il est utile lorsqu’on spécialise un comportement tout en réutilisant l’implémentation existante.
+
+\subsection{L’annotation \texttt{@Override}}
+
+
+
+\texttt{@Override} demande au compilateur de vérifier qu’une méthode redéfinit effectivement une méthode héritée.  
+Sans cette annotation, une simple faute de frappe créerait une nouvelle méthode au lieu d’écraser l’ancienne.
+
+\subsection{Étendre encore et encore\ldots{} (polymorphisme)}
+
+
+
+On peut enchaîner l’héritage (par exemple différentes sous-classes de \texttt{Weapon}).  
+Le \emph{polymorphisme} permet de manipuler des objets de sous-classes via une référence de la super-classe :
 
 \begin{lstlisting}[language=Java]
-public static void main(String[] args) {
-    Weapon weapon;
-    weapon = new MightySword("Magic sword", 3);
-    System.out.println("Price is " + weapon.getPrice());
-    System.out.println("Simple damage is " + weapon.getSimpleDamage());
-    System.out.println("Double damage is " + weapon.getDoubleDamage());
-}
+Weapon w = new MightySword(3);
+System.out.println(w.getSimpleDamage()); // Appelle la version de MightySword
 \end{lstlisting}
 
-À première vue, il semble y avoir une erreur dans le \texttt{main()}. Pourquoi
-la ligne \texttt{weapon = new MightySword(...)} n'est-elle pas une erreur de
-type ? À gauche, la variable \texttt{weapon} est de type \texttt{Weapon}, et à
-droite, on crée un objet \texttt{MightySword}. C'est accepté car Java applique
-la règle suivante :
+Le choix de la méthode est fait dynamiquement à l’exécution selon le type réel de l’objet.
 
-\textbf{Règle 1 :} Une variable de type \texttt{X} peut contenir une référence
-vers un objet de la classe \texttt{X} ou vers un objet d'une sous-classe de
-\texttt{X}.
+\subsection{La hiérarchie de classes et \texttt{Object}}
 
-Grâce à cette règle, le compilateur accepte de placer une référence vers un
-\texttt{MightySword} dans une variable déclarée comme \texttt{Weapon}. Pour Java,
-les instances de \texttt{MightySword} sont des \texttt{Weapon} particulières.
 
-La ligne suivante semble également étrange :
 
-\begin{lstlisting}[language=Java]
-System.out.println("Price is " + weapon.getPrice());
-\end{lstlisting}
+En Java, toute classe hérite (directement ou indirectement) de \texttt{Object}, qui fournit notamment :
 
-Notre classe \texttt{MightySword} n'a pas défini de méthode \texttt{getPrice},
-alors pourquoi \texttt{weapon.getPrice()} est-il possible ? C'est une autre
-règle de Java :
+\begin{itemize}
+  \item \texttt{toString()} : représentation textuelle,
+  \item \texttt{equals(Object o)} : test d’égalité logique,
+  \item \texttt{hashCode()} : code de hachage.
+\end{itemize}
 
-\textbf{Règle 2 :} La sous-classe hérite des méthodes de sa super-classe. Les
-méthodes définies dans une classe \texttt{X} peuvent être utilisées sur des
-objets d'une sous-classe de \texttt{X}.
+Redéfinir correctement \texttt{toString()}, \texttt{equals()} et \texttt{hashCode()} est essentiel pour les collections.
 
-Regardons maintenant :
+\subsection{\texttt{ArrayList}}
 
-\begin{lstlisting}[language=Java]
-System.out.println("Simple damage is " + weapon.getSimpleDamage());
-\end{lstlisting}
 
-À partir de \texttt{Weapon weapon}, on pourrait s'attendre à ce que
-\texttt{weapon.getSimpleDamage()} appelle la méthode de la classe \texttt{Weapon}.
-Mais si vous regardez la sortie du programme, c'est la méthode
-\texttt{getSimpleDamage()} de la classe \texttt{MightySword} qui est appelée.
-Pourquoi ? Parce que \texttt{weapon} contient une référence vers un objet
-\texttt{MightySword}. La règle est :
 
-\textbf{Règle 3 :} Soit \texttt{x} une variable de type \texttt{X} (où \texttt{X}
-est une classe) et assignons-lui un objet de classe \texttt{Y} (où \texttt{Y} est
-une sous-classe de \texttt{X}). Lorsque vous appelez une méthode sur \texttt{x}
-et que cette méthode est définie dans \texttt{X} et dans \texttt{Y}, la JVM
-exécute la méthode définie dans \texttt{Y}.
-
-Pour une instance de \texttt{MightySword}, appeler \texttt{getSimpleDamage()}
-exécutera toujours la version définie dans cette classe. On dit que la méthode
-\texttt{getSimpleDamage()} dans \texttt{MightySword} \emph{surcharge} la méthode
-de \texttt{Weapon}. C'est pourquoi nous avons annoté la méthode avec
-\texttt{@Override}.
-
-Avec ces trois règles, pouvez-vous deviner ce qui se passe ici ?
-
-\begin{lstlisting}[language=Java]
-System.out.println("Double damage is " + weapon.getDoubleDamage());
-\end{lstlisting}
-
-Selon la règle 2, \texttt{MightySword} hérite de \texttt{getDoubleDamage()}.
-Voyons comment cette méthode est définie dans \texttt{Weapon} :
-
-\begin{lstlisting}[language=Java]
-int getDoubleDamage() {
-    return this.getSimpleDamage() * 2;
-}
-\end{lstlisting}
-
-Cette méthode appelle \texttt{this.getSimpleDamage()}. Quelle version de
-\texttt{getSimpleDamage()} sera appelée ? Celle de \texttt{Weapon} ou celle de
-\texttt{MightySword} ? Il faut se souvenir de la règle 3 : \texttt{this}
-référence l'objet sur lequel la méthode est appelée. Comme notre objet est un
-\texttt{MightySword}, la version de \texttt{MightySword} sera appelée. Le fait
-que \texttt{getDoubleDamage} soit définie dans \texttt{Weapon} ne change rien.
-
-\subsection{Super}
-
-
-
-Il reste un détail dans notre classe \texttt{MightySword} : le constructeur :
-
-\begin{lstlisting}[language=Java]
-class MightySword extends Weapon {
-    MightySword(String name, int level) {
-        super(name, level);
-    }
-    ...
-}
-\end{lstlisting}
-
-Dans le constructeur, le mot-clé \texttt{super} désigne le constructeur de la
-super-classe de \texttt{MightySword}, c'est-à-dire \texttt{Weapon}. La ligne
-\texttt{super(name, level)} appelle simplement le constructeur défini dans
-\texttt{Weapon}.
-
-\texttt{super} peut aussi être utilisé dans les méthodes. Imaginons que nous
-voulions définir une nouvelle arme \texttt{ExpensiveWeapon} qui coûte
-exactement 100 de plus qu'une arme normale :
-
-\begin{lstlisting}[language=Java]
-class ExpensiveWeapon extends Weapon {
-    ExpensiveWeapon(String name, int level) {
-        super(name, level);
-    }
-
-    @Override
-    int getPrice() {
-        return super.getPrice() + 100;
-    }
-}
-\end{lstlisting}
-
-L'expression \texttt{super.getPrice()} appelle la méthode \texttt{getPrice()}
-telle qu'elle est définie dans la super-classe \texttt{Weapon}. Cela signifie
-que \texttt{super} permet d'appeler des méthodes de la super-classe, ce qui
-serait autrement impossible pour des méthodes redéfinies à cause de la règle 3.
-
-\subsection{L'annotation \texttt{@Override}}
-
-
-
-L'annotation \texttt{@Override} n'est pas strictement nécessaire en Java (le
-compilateur n'en a pas besoin), mais elle aide à éviter des erreurs. Par
-exemple, imaginons que vous fassiez une faute d'orthographe en écrivant
-\texttt{getSimpleDamage()} :
-
-\begin{lstlisting}[language=Java]
-class MightySword extends Weapon {
-    MightySword(String name, int level) {
-        super(name, level);
-    }
-
-    @Override
-    int getSimpleDamag() {
-        // oops, on a oublie le "e"
-        return 1000;
-    }
-}
-\end{lstlisting}
-
-À cause de cette faute, le code n'écrase rien : il introduit une nouvelle
-méthode \texttt{getSimpleDamag()}. Grâce à \texttt{@Override}, le compilateur
-peut signaler l'erreur.
-
-\subsection{Étendre, étendre\ldots{}}
-
-
-
-Une sous-classe peut non seulement redéfinir des méthodes, mais aussi ajouter
-de nouvelles variables d'instance et de nouvelles méthodes. Par exemple,
-définissons une \texttt{MagicSword} qui inflige des dégâts magiques :
-
-\begin{lstlisting}[language=Java]
-class MagicSword extends MightySword {
-    private int magicLevel;
-
-    MagicSword(String name, int level, int magicLevel) {
-        super(name, level); // appel du constructeur de MightySword
-        this.magicLevel = magicLevel;
-    }
-
-    int getMagicDamage() {
-        return this.magicLevel * 5;
-    }
-}
-\end{lstlisting}
-
-Comme vous le voyez, on peut créer des sous-classes de sous-classes. Notez que
-le constructeur utilise encore \texttt{super} pour appeler le constructeur de
-la super-classe, puis initialise la nouvelle variable \texttt{magicLevel}.
-
-Comment appeler \texttt{getMagicDamage()} ? Peut-on écrire :
-
-\begin{lstlisting}[language=Java]
-Weapon weapon = new MagicSword("Elven sword", 7, 3);
-System.out.println(weapon.getMagicDamage());
-\end{lstlisting}
-
-La réponse est non. La règle 3 ne s'applique qu'aux méthodes définies à la fois
-dans la sous-classe et dans la super-classe. Ce n'est pas le cas ici. Le
-compilateur refusera \texttt{weapon.getMagicDamage()} car, en se basant sur
-\texttt{Weapon weapon}, il ne peut pas savoir que l'objet référencé possède
-\texttt{getMagicDamage()}. Cela peut sembler stupide, mais considérez :
-
-\begin{lstlisting}[language=Java]
-Weapon weapon = new MagicSword("Elven sword", 7, 3);
-weapon = new Weapon("Dagger", 1);
-System.out.println(weapon.getMagicDamage());
-// ne compile pas, heureusement !
-\end{lstlisting}
-
-Pour appeler \texttt{getMagicDamage()}, il faut convaincre le compilateur que
-la variable référence bien un \texttt{MagicSword}. Par exemple, en changeant le
-type de la variable :
-
-\begin{lstlisting}[language=Java]
-MagicSword weapon = new MagicSword("Elven sword", 7, 3);
-System.out.println(weapon.getMagicDamage());
-\end{lstlisting}
-
-Ainsi, il est clair que la variable référence un \texttt{MagicSword} (ou une
-sous-classe ; rappelez-vous la règle 1).
-
-Alternativement, on peut faire un cast :
-
-\begin{lstlisting}[language=Java]
-Weapon weapon = new MagicSword("Elven sword", 7, 3);
-System.out.println(((MagicSword) weapon).getMagicDamage());
-\end{lstlisting}
-
-Mais soyez prudent avec les casts : le compilateur les accepte, mais une erreur
-provoquera un problème à l'exécution :
-
-\begin{lstlisting}[language=Java]
-Weapon weapon = new Weapon("Dagger", 1);
-System.out.println(((MagicSword) weapon).getMagicDamage());
-// oh oh...
-\end{lstlisting}
-
-\subsection{Polymorphisme}
-
-
-
-Les trois règles permettent d'écrire du code et des structures de données qui
-fonctionnent avec des objets de classes différentes. Par exemple, grâce à la
-règle 1, on peut définir un tableau contenant différents types d'armes :
-
-\begin{lstlisting}[language=Java]
-Weapon[] inventory = new Weapon[3];
-inventory[0] = new Weapon("Dagger", 2);
-inventory[1] = new MagicSword("Elven sword", 7, 3);
-inventory[2] = new ExpensiveWeapon("Golden pitchfork", 3);
-\end{lstlisting}
-
-Et grâce aux règles 2 et 3, on peut écrire des méthodes qui fonctionnent pour
-différents types d'armes :
-
-\begin{lstlisting}[language=Java]
-int getPriceOfInventory(Weapon[] inventory) {
-    int sum = 0;
-    for (Weapon weapon : inventory) {
-        sum += weapon.getPrice();
-    }
-    return sum;
-}
-\end{lstlisting}
-
-Bien que \texttt{getPriceOfInventory()} semble ne fonctionner qu'avec des
-\texttt{Weapon}, elle fonctionne aussi avec toutes les sous-classes de
-\texttt{Weapon}. C'est ce qu'on appelle le \emph{polymorphisme de sous-type}.
-Si un \texttt{ExpensiveWeapon} est dans le tableau, la règle 3 garantit que
-\texttt{weapon.getPrice()} appelle la méthode définie dans \texttt{ExpensiveWeapon}.
-
-Conclusion : il existe une différence entre ce que le compilateur voit dans le
-code source et ce qui se passe réellement à l'exécution. Le compilateur ne
-vérifie l'existence d'une méthode que dans le type déclaré de la variable. Mais
-pendant l'exécution, l'important est l'objet réellement référencé. On dit que
-\emph{le typage du compilateur est statique}, tandis que \emph{les appels de
-méthodes de la JVM sont dynamiques}.
-
-\subsection{La hiérarchie de classes}
-
-
-
-Si l'on prend toutes les classes d'armes définies précédemment, on obtient une
-\og hiérarchie de classes \fg{} qui montre les relations entre sous-classes et
-super-classes.
-
-La classe \texttt{Object} située au-dessus de \texttt{Weapon} n'a pas été
-définie par nous : elle est créée automatiquement par Java et est la
-super-classe de \emph{tous} les types non primitifs, y compris les tableaux et
-les chaînes ! Une variable de type \texttt{Object} peut donc référencer n'importe
-quelle valeur non primitive :
-
-\begin{lstlisting}[language=Java]
-Object o;
-o = "Hello";                 // OK
-o = new int[]{1, 2, 3};       // OK aussi
-o = new MagicSword("Elven sword", 7, 3); // toujours OK
-\end{lstlisting}
-
-La documentation de \texttt{Object} se trouve à l'adresse
-\url{https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html}. Cette
-classe définit plusieurs méthodes intéressantes applicables à tous les objets.
-L'une d'elles est \texttt{toString()}, appelée par des méthodes comme
-\texttt{String.valueOf()} ou \texttt{System.out.println()} lorsqu'on leur passe
-un objet. En redéfinissant cette méthode dans notre propre classe, on obtient
-un affichage agréable :
-
-\begin{lstlisting}[language=Java]
-class Player {
-    private String name;
-    private int birthYear;
-
-    Player(String name, int birthYear) {
-        this.name = name;
-        this.birthYear = birthYear;
-    }
-
-    @Override
-    public String toString() {
-        return "Player " + this.name + " born in " + this.birthYear;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Player peter = new Player("Peter", 1993);
-        System.out.println(peter); // appelle toString() de Player
-    }
-}
-\end{lstlisting}
-
-La méthode \texttt{toString()} est déclarée \texttt{public} dans \texttt{Object};
-quand on la redéfinit, on doit donc la déclarer \texttt{public} aussi. Nous
-reviendrons sur la signification de \texttt{public} plus tard.
-
-Une autre méthode intéressante est \texttt{equals()}. Nous avons déjà appris
-qu'il faut utiliser \texttt{equals()} pour comparer le contenu de deux chaînes,
-car \texttt{==} compare seulement les références. Cela est recommandé aussi
-pour nos objets. Mais comparer des objets est plus difficile que comparer des
-chaînes. Pour notre classe \texttt{Player}, quand deux joueurs sont-ils égaux ?
-Java ne peut pas répondre à cette question : nous devons fournir notre propre
-implémentation de \texttt{equals()}. Par exemple, deux \texttt{Player} sont
-égaux s'ils ont le même nom et la même année de naissance :
-
-\begin{lstlisting}[language=Java]
-import java.util.Objects;
-
-class Player {
-    private String name;
-    private int birthYear;
-
-    Player(String name, int birthYear) {
-        this.name = name;
-        this.birthYear = birthYear;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true; // meme objet !
-        } else if (obj == null) {
-            return false; // parametre null
-        } else if (this.getClass() != obj.getClass()) {
-            return false; // types differents
-        } else {
-            Player p = (Player) obj;
-            return p.name.equals(this.name) && p.birthYear == this.birthYear;
-        }
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(this.name, this.birthYear);
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Player peter1 = new Player("Peter", 1993);
-        Player peter2 = new Player("Peter", 1993);
-        System.out.println(peter1.equals(peter2)); // true
-        System.out.println(peter1.equals("Hello")); // false
-        System.out.println(peter1.equals(null)); // false
-    }
-}
-\end{lstlisting}
-
-Que se passe-t-il ici ? Une difficulté avec \texttt{equals()} est qu'elle peut
-être appelée avec un paramètre \texttt{null} ou un objet qui n'est pas une
-instance de \texttt{Player}. Avant de comparer, il faut effectuer des tests,
-dont celui du type :
-
-\begin{lstlisting}[language=Java]
-else if (this.getClass() != obj.getClass()) {
-\end{lstlisting}
-
-Si tous ces tests passent, on peut enfin comparer le nom et l'année de
-naissance. Notez qu'il existe d'autres difficultés avec \texttt{equals()}
-liées à \texttt{hashCode()}, qu'il faut toujours redéfinir ensemble, comme
-ci-dessus.
-
-\subsection{ArrayList}
-
-
-
-Utiliser \texttt{Object} est utile quand on veut écrire des méthodes qui
-fonctionnent avec tous les types d'objets. Par exemple, un inconvénient des
-tableaux par rapport aux listes Python est qu'ils ne peuvent pas changer de
-taille. Dans le package \texttt{java.util}, la classe \texttt{ArrayList} permet
-cela :
+\texttt{ArrayList<E>} est une implémentation dynamique de liste.
 
 \begin{lstlisting}[language=Java]
 import java.util.ArrayList;
 
-public class Main {
-    public static void main(String[] args) {
-        ArrayList list = new ArrayList();
-        // ajoute deux elements a la fin de la liste
-        list.add("Hello");
-        list.add(new int[]{1, 2, 3});
-        System.out.println(list.size()); // nombre d'elements
-        System.out.println(list.get(0)); // premier element
-    }
-}
+ArrayList<String> names = new ArrayList<>();
+names.add("Alice");
+names.add("Bob");
 \end{lstlisting}
 
-Comme on le voit, la méthode \texttt{add()} accepte n'importe quelle référence
-(y compris vers des tableaux et des chaînes). De manière simplifiée, on peut
-imaginer que \texttt{ArrayList} ressemble à ceci :
+On utilise :
 
-\begin{lstlisting}[language=Java]
-public class ArrayList {
-    // les elements ajoutes
-    private Object[] elements;
-
-    public void add(Object obj) {
-        // ajoute "obj" dans le tableau
-        // ...
-    }
-
-    public Object get(int index) {
-        // renvoie l'objet en position "index"
-        // ...
-    }
-}
-\end{lstlisting}
+\begin{itemize}
+  \item \texttt{add}, \texttt{get}, \texttt{size}, \texttt{remove}, \dots
+\end{itemize}
 
 \subsection{Boucles \texttt{for} sur \texttt{ArrayList}}
 
 
 
-Les boucles \texttt{for} fonctionnent aussi sur les \texttt{ArrayList} :
-
 \begin{lstlisting}[language=Java]
-ArrayList list = new ArrayList();
-list.add("Hello");
-list.add("World");
-
-// boucle for simple
-for (Object obj : list) {
-    System.out.println(obj);
+// for classique
+for (int i = 0; i < names.size(); i++) {
+    System.out.println(names.get(i));
 }
 
-// boucle for complexe
-for (int i = 0; i < list.size(); i++) {
-    System.out.println(list.get(i));
+// for-each
+for (String n : names) {
+    System.out.println(n);
 }
 \end{lstlisting}
 
@@ -2708,516 +2125,114 @@ for (int i = 0; i < list.size(); i++) {
 
 
 
-Malheureusement, les types primitifs ne sont pas des sous-classes de
-\texttt{Object}. On ne peut donc pas ajouter directement un \texttt{int} à une
-\texttt{ArrayList}, sans l'aide du compilateur :
+Java convertit automatiquement entre types primitifs et leurs classes enveloppes :
+
+\begin{itemize}
+  \item \texttt{int} $\leftrightarrow$ \texttt{Integer},
+  \item \texttt{double} $\leftrightarrow$ \texttt{Double}, etc.
+\end{itemize}
 
 \begin{lstlisting}[language=Java]
-list.add(3); // est-ce que ca marche ?
+ArrayList<Integer> list = new ArrayList<>();
+list.add(10);          // boxing automatique
+int x = list.get(0);   // unboxing automatique
 \end{lstlisting}
 
-Une solution consiste à écrire une classe dont l'unique but est de stocker la
-valeur \texttt{int} dans un objet que l'on peut ajouter à la liste :
+\subsection{\texttt{ArrayList} et génériques}
+
+
+
+Les collections utilisent des \emph{génériques} pour indiquer le type des éléments :
 
 \begin{lstlisting}[language=Java]
-class IntObject {
-    int value;
-    IntObject(int value) {
-        this.value = value;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        ArrayList list = new ArrayList();
-        list.add(new IntObject(3));
-    }
-}
+ArrayList<String> list = new ArrayList<>();
+list.add("hello");
+// list.add(1); // interdit : pas une String
 \end{lstlisting}
 
-Ce procédé s'appelle \emph{boxing} car on met la valeur 3 dans une petite
-\og boîte \fg{} (l'objet \texttt{IntObject}). Heureusement, on n'a pas besoin
-d'écrire notre propre classe : \texttt{java.lang} fournit déjà \texttt{Integer} :
+Cela permet de détecter des erreurs de type à la compilation.
+
+\subsection{Surcharge de méthodes (paramètres différents)}
+
+
+
+Deux méthodes dans la même classe peuvent partager le même nom si leurs listes de paramètres sont différentes :
 
 \begin{lstlisting}[language=Java]
-// Integer est une classe du package java.lang
-Integer value = Integer.valueOf(3);
-list.add(value);
+void print(String s) { ... }
+void print(int x)    { ... }
 \end{lstlisting}
 
-Le package \texttt{java.lang} contient aussi \texttt{Long}, \texttt{Float}, etc.
-pour les autres types primitifs.
+Le compilateur choisit la version appropriée selon les arguments.
 
-Le boxing est pénible et n'existe que parce que les types primitifs ne sont pas
-des sous-classes de \texttt{Object}. Heureusement, le compilateur peut le faire
-pour vous : c'est l'\emph{autoboxing}. Vous pouvez écrire :
-
-\begin{lstlisting}[language=Java]
-list.add(3); // appelle automatiquement Integer.valueOf(3)
-\end{lstlisting}
-
-L'autoboxing n'est pas limité à \texttt{ArrayList}. Il fonctionne partout où
-vous assignez une valeur primitive à une variable d'un type classe compatible.
-L'opération inverse, \emph{unboxing}, est aussi automatique :
-
-\begin{lstlisting}[language=Java]
-// autoboxing
-// identique a : Integer value = Integer.valueOf(3);
-Integer value = 3;
-
-// auto-unboxing
-// identique a : int i = value.intValue();
-int i = value;
-\end{lstlisting}
-
-\subsection{ArrayList et génériques}
+\subsection{Surcharge avec des types de sous-classes}
 
 
 
-Le fait que \texttt{ArrayList} utilise \texttt{Object} a un gros inconvénient.
-Comme \texttt{get()} retourne un \texttt{Object}, il faut faire un cast pour
-retrouver le type original :
+Si plusieurs signatures correspondent, Java choisit celle dont les types de paramètres sont les plus spécifiques.
 
-\begin{lstlisting}[language=Java]
-ArrayList list = new ArrayList();
-list.add("Hello");
-list.add("World");
-int len = ((String) list.get(0)).length();
-\end{lstlisting}
-
-Même si nous savons que la liste contient uniquement des chaînes, le
-compilateur exige le cast. C'est pénible et peut entraîner des erreurs qui
-n'apparaissent qu'à l'exécution. Heureusement, Java propose les
-\emph{génériques} :
-
-\begin{lstlisting}[language=Java]
-ArrayList<String> list = new ArrayList<String>();
-list.add("Hello");
-list.add("World");
-int len = list.get(0).length();
-\end{lstlisting}
-
-La syntaxe \texttt{ArrayList<String>} indique au compilateur que \texttt{add()}
-n'accepte que des \texttt{String}, et que \texttt{get()} retourne un
-\texttt{String}. Le cast n'est plus nécessaire (il existe encore, mais le
-compilateur l'ajoute automatiquement dans le \texttt{.class}).
-
-Vous verrez d'autres exemples de génériques plus tard. Pour donner un aperçu,
-voici la forme réelle de \texttt{ArrayList} :
-
-\begin{lstlisting}[language=Java]
-public class ArrayList<E> {
-    // parametre de type E
-    private Object[] elements;
-
-    public void add(E obj) {
-        // ...
-    }
-
-    public E get(int index) {
-        // ...
-    }
-}
-\end{lstlisting}
-
-Le \texttt{E} est un \emph{paramètre de type}. Il représente le type des
-éléments stockés dans la liste. En créant notre liste avec
-\texttt{ArrayList<String>}, on dit au compilateur que \texttt{E = String}. Les
-méthodes \texttt{add()} et \texttt{get()} sont alors comprises comme
-\texttt{void add(String obj)} et \texttt{String get(int index)}.
-
-\subsection{Surcharge de méthodes avec des paramètres différents}
+\subsection{Surcharge et ``meilleure correspondance''}
 
 
 
-En Java, il est permis d'avoir deux méthodes portant le même nom à condition
-qu'elles aient des paramètres différents. C'est la \emph{surcharge} de méthodes.
-Exemple :
-
-\begin{lstlisting}[language=Java]
-class Player {
-    private String name;
-    private int birthYear;
-
-    Player(String name, int birthYear) {
-        this.name = name;
-        this.birthYear = birthYear;
-    }
-
-    public void set(String name) {
-        this.name = name;
-    }
-
-    public void set(String name, int birthYear) {
-        this.name = name;
-        this.birthYear = birthYear;
-    }
-}
-\end{lstlisting}
-
-Si l'on appelle \texttt{set()}, le compilateur sait quelle version utiliser en
-regardant les paramètres :
-
-\begin{lstlisting}[language=Java]
-Player player = new Player("Peter", 1993);
-player.set("Pierre", 1993);
-// appelle la version avec String et int
-\end{lstlisting}
-
-\subsection{Surcharge avec des paramètres de sous-classes}
-
-
-
-Il faut être prudent quand on surcharge des méthodes dont les paramètres sont
-des classes et des sous-classes. Voici un exemple minimal :
-
-\begin{lstlisting}[language=Java]
-class Weapon {
-    // ...
-}
-
-class MightySword extends Weapon {
-    // ...
-}
-
-class Player {
-    Weapon weapon;
-    int power;
-
-    void giveWeapon(Weapon weapon) {
-        this.weapon = weapon;
-        this.power = 0;
-    }
-
-    void giveWeapon(MightySword weapon) {
-        this.weapon = weapon;
-        this.power = 10; // une MightySword augmente la puissance
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Player player = new Player();
-        Weapon weapon = new MightySword();
-        player.giveWeapon(weapon);
-        System.out.println(player.power);
-    }
-}
-\end{lstlisting}
-
-Que va afficher \texttt{System.out.println(player.power)} après avoir donné une
-\texttt{MightySword} ? Surprenant : cela affiche \texttt{0}. La méthode
-\texttt{void giveWeapon(MightySword weapon)} n'est \emph{pas} appelée alors que
-l'objet est bien une \texttt{MightySword}. L'explication : le compilateur ne
-regarde que le type déclaré dans le code source. Ici, la variable \texttt{weapon}
-est de type \texttt{Weapon}, donc c'est la version \texttt{giveWeapon(Weapon)}
-qui est appelée. Il ne peut pas savoir qu'à l'exécution la variable contient un
-\texttt{MightySword}.
-
-Leçon : les appels de méthode sont dynamiques uniquement pour l'objet sur
-lequel la méthode est appelée (règle 3), pas pour les arguments.
-
-La bonne façon d'appeler \texttt{giveWeapon()} pour une \texttt{MightySword} est :
-
-\begin{lstlisting}[language=Java]
-MightySword weapon = new MightySword();
-player.giveWeapon(weapon);
-\end{lstlisting}
-
-ou simplement :
-
-\begin{lstlisting}[language=Java]
-player.giveWeapon(new MightySword());
-\end{lstlisting}
-
-\subsection{Surcharge avec correspondance la plus proche}
-
-
-
-Que se passe-t-il si l'on appelle une méthode surchargée mais qu'il n'existe
-pas de version qui corresponde exactement au type de l'argument ? Voici le même
-exemple, avec une troisième classe \texttt{MagicSword} qui est une sous-classe
-de \texttt{MightySword} :
-
-\begin{lstlisting}[language=Java]
-class Weapon {
-    // ...
-}
-
-class MightySword extends Weapon {
-    // ...
-}
-
-class MagicSword extends MightySword {
-    // ...
-}
-
-class Player {
-    Weapon weapon;
-    int power;
-
-    void giveWeapon(Weapon weapon) {
-        this.weapon = weapon;
-        this.power = 0;
-    }
-
-    void giveWeapon(MightySword weapon) {
-        this.weapon = weapon;
-        this.power = 10;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Player player = new Player();
-        player.giveWeapon(new MagicSword());
-        System.out.println(player.power);
-    }
-}
-\end{lstlisting}
-
-Quelle version de \texttt{giveWeapon()} sera appelée si l'argument est un
-\texttt{MagicSword} ? Dans ce cas, le compilateur choisit la version dont le
-type est le plus proche de \texttt{MagicSword}, ici
-\texttt{void giveWeapon(MightySword weapon)}.
+La résolution de surcharge suit des règles précises (conversion, promotion, etc.). Si l’ambiguïté est trop grande, le code ne compile pas.
 
 \subsection{Héritage multiple}
 
 
 
-Si l'on reprend nos exemples avec \texttt{ExpensiveWeapon} et \texttt{MightySword},
-on pourrait être tenté de créer une classe \texttt{ExpensiveMightySword} qui
-hérite des deux :
+Java \emph{n’autorise pas} l’héritage multiple de classes (une classe ne peut étendre qu’une seule autre classe), afin d’éviter des ambiguïtés.  
+La flexibilité supplémentaire se fait via :
 
-\begin{lstlisting}[language=Java]
-class Weapon {
-    int level;
-
-    int getPrice() {
-        return 100;
-    }
-}
-
-class ExpensiveWeapon extends Weapon {
-    @Override
-    int getPrice() {
-        return 1000;
-    }
-}
-
-class MightySword extends Weapon {
-    @Override
-    int getPrice() {
-        return 500 * level;
-    }
-}
-
-// Pas autorise en Java !
-// On ne peut pas etendre DEUX classes.
-class ExpensiveMightySword extends ExpensiveWeapon, MightySword {
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Weapon weapon = new ExpensiveMightySword();
-        System.out.println(weapon.getPrice());
-        // ???
-    }
-}
-\end{lstlisting}
-
-Quelle implémentation de \texttt{getPrice} doit être appelée ? Celle de
-\texttt{ExpensiveWeapon} ou de \texttt{MightySword} ? Comme ce n'est pas clair,
-l'héritage multiple est interdit en Java. D'autres langages l'autorisent sous
-conditions ou avec des règles supplémentaires. Par exemple, en C\# la classe
-\texttt{ExpensiveMightySword} devrait redéfinir \texttt{getPrice()}. En Python,
-la méthode de \texttt{ExpensiveWeapon} serait appelée car cette classe apparaît
-en premier dans la déclaration.
-
-Si vous voulez en savoir plus, consultez
-\url{https://en.wikipedia.org/wiki/Multiple_inheritance}.
-
-Cependant, Java propose un autre concept, les \emph{interfaces}, qui peuvent
-souvent servir de substitut à l'héritage multiple. Nous les verrons plus loin.
+\begin{itemize}
+  \item les interfaces,
+  \item la délégation.
+\end{itemize}
 
 \subsection{Le mot-clé \texttt{final}}
 
 
 
-Comme \texttt{private}, le mot-clé \texttt{final} ne change pas le comportement
-de votre programme. Son rôle est d'empêcher certaines erreurs (nous verrons
-d'autres usages de \texttt{final} plus tard). Sa signification dépend de
-l'endroit où il est utilisé.
+\subsubsection{Paramètres \texttt{final}}
 
-\subsection{Paramètres \texttt{final}}
+Un paramètre déclaré \texttt{final} ne peut plus être réaffecté dans le corps de la méthode.
 
+\subsubsection{Variables locales \texttt{final}}
 
+Même idée : une variable locale \texttt{final} ne peut être réaffectée. Utile pour exprimer qu’une valeur ne doit pas changer.
 
-Si vous déclarez un paramètre comme \texttt{final}, sa valeur ne peut pas être
-changée dans la méthode. Cela évite des erreurs comme :
+\subsubsection{Méthodes \texttt{final}}
 
-\begin{lstlisting}[language=Java]
-// calcule la somme des nombres de 1 a n
-int calculateSum(final int n) {
-    // <--- avez-vous vu le "final" ?
-    int sum = 0;
-    for (int i = 1; i < n; i++) {
-        n += i; // oops, je voulais ecrire sum += i
-    }
-    return sum;
-}
-\end{lstlisting}
+Une méthode \texttt{final} ne peut pas être redéfinie dans une sous-classe. On garantit ainsi un comportement immuable.
 
-Dans cet exemple, \texttt{n += i} sera refusé par le compilateur car \texttt{n}
-est \texttt{final}.
+\subsubsection{Classes \texttt{final}}
 
-Notez que si une variable contient une référence vers un tableau ou un objet,
-la déclarer \texttt{final} n'empêche pas de modifier le contenu du tableau ou
-de l'objet. Cela vaut pour les autres usages de \texttt{final}. Exemple :
+Une classe \texttt{final} ne peut pas être étendue. Exemple : \texttt{String}. Cela évite qu’une sous-classe ne brise des hypothèses cruciales.
 
-\begin{lstlisting}[language=Java]
-void increment(final int[] a) {
-    a[0]++; // cela fonctionne toujours
-}
-\end{lstlisting}
+\subsubsection{Variables de classe \texttt{final}}
 
-\subsection{Variables locales \texttt{final}}
-
-
-
-Les variables locales déclarées \texttt{final} ne peuvent pas changer de valeur
-après avoir été initialisées. Le code suivant est refusé :
-
-\begin{lstlisting}[language=Java]
-int calculateSumSquare(int n) {
-    final int n2 = n * n;
-    // <--- avez-vous vu le "final" ?
-    int sum = 0;
-    for (int i = 1; i < n2; i++) {
-        n2 += i; // oops, je voulais ecrire sum += i
-    }
-    return sum;
-}
-\end{lstlisting}
-
-\subsection{Méthodes \texttt{final}}
-
-
-
-Les méthodes déclarées \texttt{final} ne peuvent pas être redéfinies dans une
-sous-classe. Cela peut être utile si vous pensez que la méthode contient du
-code important qu'une sous-classe pourrait casser. Exemple :
-
-\begin{lstlisting}[language=Java]
-class Person {
-    String name, firstname;
-
-    final String getFullName() {
-        return firstname + " " + name;
-    }
-}
-
-class Employee extends Person {
-    @Override
-    String getFullName() {
-        // pas autorise. La methode est "final" dans Person
-        return "Wolverine";
-    }
-}
-\end{lstlisting}
-
-Cependant, il faut réfléchir avant de déclarer une méthode \texttt{final}, car
-cela limite fortement la flexibilité des sous-classes.
-
-\subsection{Classes \texttt{final}}
-
-
-
-Les classes déclarées \texttt{final} ne peuvent pas être étendues. Par exemple,
-\texttt{String} est \texttt{final} car tous les programmes Java dépendent de son
-comportement précis décrit dans la documentation. Une sous-classe pourrait
-causer de sérieux problèmes.
-
-\subsection{Variables de classe \texttt{final}}
-
-
-
-Comme les variables locales \texttt{final}, les variables de classe déclarées
-\texttt{final} ne peuvent pas être modifiées après initialisation. Un cas
-typique est la déclaration d'une constante :
+Typiquement utilisées pour les constantes :
 
 \begin{lstlisting}[language=Java]
 class Physics {
     static final double SPEED_OF_LIGHT = 299792458;
-    // metres par seconde
 }
 \end{lstlisting}
 
-La convention de nommage Java recommande d'écrire les constantes en majuscules.
+\subsubsection{Variables d’instance \texttt{final}}
 
-\subsection{Variables d'instance \texttt{final}}
+Une variable d’instance \texttt{final} est fixée une fois pour toutes (souvent dans le constructeur) et ne peut plus être modifiée.  
+Pratique pour représenter l’\og identité\fg{} d’un objet (par exemple un numéro de registre national).
+
+\subsection{Paquets (\textit{packages})}
 
 
+\label{subsec:packages}
 
-Les variables d'instance \texttt{final} ne peuvent pas être modifiées après
-initialisation. En général, on les initialise dans le constructeur. Exemple :
-
-\begin{lstlisting}[language=Java]
-class Person {
-    final String socialSecurityNumber;
-
-    Person(String ssn) {
-        this.socialSecurityNumber = ssn;
-    }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Person person = new Person("123-456-789");
-        person.socialSecurityNumber = "12";
-        // erreur !
-    }
-}
-\end{lstlisting}
-
-Une raison importante de déclarer une variable d'instance \texttt{final} est
-quand elle fait partie de l'\og identité \fg{} d'un objet : quelque chose qui
-ne doit jamais changer après la création de l'objet.
-
-Notez qu'il est possible d'obtenir une variable non modifiable sans
-\texttt{final}. Par exemple, on pourrait écrire :
+Dans des projets plus grands, on place chaque classe dans son propre fichier \texttt{.java} et on les regroupe par \emph{paquets} :
 
 \begin{lstlisting}[language=Java]
-class Person {
-    private String socialSecurityNumber;
-
-    Person(String ssn) {
-        this.socialSecurityNumber = ssn;
-    }
-
-    final String getSSN() {
-        // "final" empêche la redéfinition
-        return this.socialSecurityNumber;
-    }
-}
-\end{lstlisting}
-
-\subsection{Paquets}
-
-
-
-Dans tous nos petits exemples, nous avons mis toutes les classes dans un seul
-fichier \texttt{.java}. Ce n'est pas pratique dans des projets plus grands. La
-règle générale (ou recommandation) est de placer chaque classe dans un fichier
-séparé portant le même nom que la classe.
-
-Java permet aussi de regrouper les classes dans des \emph{packages} en écrivant
-une instruction \texttt{package} en première ligne du fichier :
-
-\begin{lstlisting}[language=Java]
-// **********************************
-// **** File Person.java ****
-// **********************************
+// Fichier Person.java
 package lepl1402.week3;
 
 class Person {
@@ -3227,10 +2242,10 @@ class Person {
         this.socialSecurityNumber = ssn;
     }
 }
+\end{lstlisting}
 
-// **********************************
-// **** File Main.java ****
-// **********************************
+\begin{lstlisting}[language=Java]
+// Fichier Main.java
 package lepl1402.week3;
 
 public class Main {
@@ -3240,32 +2255,18 @@ public class Main {
 }
 \end{lstlisting}
 
-Si vous mettez vos classes dans des packages, le compilateur s'attend à ce que
-vous organisiez les fichiers source dans une arborescence de répertoires qui
-correspond aux noms de packages. Dans notre exemple, les fichiers \texttt{.java}
-doivent être placés dans un dossier \texttt{week3} à l'intérieur d'un dossier
-\texttt{lepl1402} dans \texttt{src}.
+La structure des répertoires doit refléter celle des paquets.
 
-Si vous ne mettez pas d'instruction \texttt{package}, le compilateur place vos
-classes dans le \emph{package sans nom}. Dans ce cas, vous pouvez placer tous
-vos fichiers directement dans \texttt{src}.
+Si aucun \texttt{package} n’est indiqué, la classe appartient au \og package sans nom\fg{}.
 
-\subsection{Utiliser plusieurs packages}
+\subsection{Utiliser plusieurs paquets}
 
 
 
-En Java, les packages sont indépendants. Les classes d'un même package peuvent
-être utilisées ensemble, comme dans l'exemple précédent.
-
-Cependant, les classes de packages différents ne se \og voient \fg{} pas par
-défaut. Par exemple, si l'on place \texttt{Person} dans le package
-\texttt{lepl1402.week3.example} et \texttt{Main} dans \texttt{lepl1402.week3},
-il faut modifier le code :
+Les classes de paquets différents ne se voient pas automatiquement. Exemple :
 
 \begin{lstlisting}[language=Java]
-// **********************************
-// **** File Person.java ****
-// **********************************
+// Person.java
 package lepl1402.week3.example;
 
 public class Person {
@@ -3275,10 +2276,10 @@ public class Person {
         this.socialSecurityNumber = ssn;
     }
 }
+\end{lstlisting}
 
-// **********************************
-// **** File Main.java ****
-// **********************************
+\begin{lstlisting}[language=Java]
+// Main.java
 package lepl1402.week3;
 
 import lepl1402.week3.example.Person;
@@ -3290,117 +2291,84 @@ public class Main {
 }
 \end{lstlisting}
 
-Dans cet exemple, nous avons fait trois modifications :
+Points importants :
 
 \begin{enumerate}
-  \item Nous avons déclaré la classe \texttt{Person} comme \texttt{public}.
-        Seules les classes publiques peuvent être utilisées par d'autres
-        packages.
-  \item Nous avons déclaré le constructeur de \texttt{Person} comme \texttt{public}.
-        Encore une fois, seules les méthodes publiques sont accessibles.
-  \item Nous avons ajouté un \texttt{import} dans \texttt{Main.java}. Cet
-        \texttt{import} indique où se trouve la classe \texttt{Person}. Le nom
-        \texttt{lepl1402.week3.example.Person} est le \emph{nom pleinement
-        qualifié} de la classe.
+  \item Seules les classes \texttt{public} sont accessibles depuis d’autres paquets.
+  \item Seuls les membres \texttt{public} sont accessibles depuis d’autres paquets.
+  \item On utilise \texttt{import} ou le nom pleinement qualifié.
 \end{enumerate}
 
-Comme alternative à \texttt{import}, on peut utiliser le nom pleinement
-qualifié directement dans le code, mais cela le rend moins lisible :
-
-\begin{lstlisting}[language=Java]
-// **********************************
-// **** File Main.java ****
-// **********************************
-package lepl1402.week3;
-
-public class Main {
-    public static void main(String[] args) {
-        lepl1402.week3.example.Person person =
-            new lepl1402.week3.example.Person("123-456-789");
-    }
-}
-\end{lstlisting}
-
-\subsection{Pourquoi les packages sont-ils utiles ?}
+\subsection{Pourquoi les paquets sont-ils utiles ?}
 
 
 
-Les packages ont deux avantages. D'abord, avec le mot-clé \texttt{public}, vous
-contrôlez pour chaque classe et méthode si elle peut être utilisée par d'autres
-packages. Par exemple, \texttt{java.lang} contient des classes comme
-\texttt{String} ou \texttt{Integer}, déclarées \texttt{public}. Mais il contient
-aussi des classes comme \texttt{CharacterData0E}, utilisées en interne et donc
-non publiques.
+\begin{itemize}
+  \item Ils permettent de contrôler la visibilité des classes et méthodes.
+  \item Ils offrent des espaces de noms séparés : deux paquets peuvent contenir chacun une classe \texttt{ABC} sans conflit.
+\end{itemize}
 
-Le second avantage est qu'ils fournissent des \emph{espaces de noms} séparés.
-Un package \texttt{X} et un package \texttt{Y} peuvent contenir chacun une
-classe \texttt{ABC}. En utilisant les noms pleinement qualifiés (ou \texttt{import}),
-on indique sans ambiguïté si l'on veut \texttt{X.ABC} ou \texttt{Y.ABC}.
-
-\subsection{Contrôle d'accès}
+\subsection{Contrôle d’accès}
 
 
+\label{subsec:access-control}
 
-Récapitulons la visibilité des classes dans les packages :
+Récapitulatif :
 
-\begin{enumerate}
-  \item Les classes déclarées \texttt{public} sont visibles dans tous les packages.
-  \item Les classes non publiques sont visibles uniquement dans leur package.
-\end{enumerate}
+\paragraph{Visibilité des classes}
 
-Pour les membres de classe (méthodes, variables de classe, variables
-d'instance), les règles sont plus complexes :
+\begin{itemize}
+  \item \texttt{public} : visible partout.
+  \item sans modificateur : visible uniquement dans le même paquet.
+\end{itemize}
 
-\begin{enumerate}
-  \item Les membres \texttt{public} sont accessibles depuis tous les packages.
-  \item Les membres \texttt{private} ne sont accessibles que dans leur classe.
-  \item Les membres \texttt{protected} sont accessibles dans leur classe et dans
-        les sous-classes.
-  \item Les membres sans modificateur spécial sont accessibles dans la classe
-        et dans le même package.
-\end{enumerate}
+\paragraph{Visibilité des membres (champs, méthodes)}
+
+\begin{itemize}
+  \item \texttt{public} : accessible partout.
+  \item \texttt{private} : accessible uniquement dans la classe.
+  \item \texttt{protected} : accessible dans la classe, ses sous-classes et les classes du même paquet.
+  \item sans modificateur : accessible dans la classe et dans le même paquet.
+\end{itemize}
 
 \section{Classes abstraites}
 \label{sec:abstract-classes}
 
-Une classe abstraite en Java est une classe qui ne peut pas être instanciée
-directement et qui est destinée à servir de classe parente. Les classes
-abstraites sont utiles lorsque vous voulez fournir une base commune à plusieurs
-sous-classes sans vouloir instancier cette base. Elles peuvent contenir des
-méthodes concrètes et des méthodes abstraites (sans corps).
+Une classe abstraite ne peut pas être instanciée directement. Elle sert de base commune à plusieurs sous-classes.  
+Elle peut contenir :
 
-Imaginons un programme de dessin géométrique avec des calculs scientifiques,
-comme le calcul de l'aire de différentes formes. La formule de l'aire dépend
-de la forme, mais certaines fonctionnalités sont communes (par exemple,
-afficher des informations). Le programme doit aussi permettre aux utilisateurs
-d'ajouter de nouvelles formes.
+\begin{itemize}
+  \item des méthodes concrètes,
+  \item des méthodes abstraites (sans corps).
+\end{itemize}
 
-Notre objectif est de respecter le \emph{principe Open/Closed} (OCP) : un module
-doit être ouvert à l'extension mais fermé à la modification. Les classes
-abstraites sont très utiles dans ce contexte.
+Imaginons un programme de dessin scientifique qui gère différentes formes géométriques. Toutes les formes peuvent :
+
+\begin{itemize}
+  \item afficher des informations à leur sujet,
+  \item mais la formule de l’aire dépend du type de forme.
+\end{itemize}
+
+On applique le principe Open/Closed : ouvert à l’extension, fermé à la modification.  
 
 \begin{lstlisting}[language=Java]
 public abstract class Shape {
     protected String shapeName;
-    // variable d'instance pour le nom de la forme
 
     public Shape(String name) {
         this.shapeName = name;
     }
 
-    // Methode abstraite pour calculer l'aire
+    // Methode abstraite : chaque sous-classe fournit sa formule
     public abstract double calculateArea();
 
-    // Methode concrete definie dans la classe abstraite
+    // Methode concrete commune
     public void displayShapeInfo() {
         System.out.println("The " + shapeName +
                            " has an area of: " + calculateArea());
     }
 }
 \end{lstlisting}
-
-Avec cette conception, ajouter de nouvelles formes est simple et ne nécessite
-pas de modifier le code existant. Il suffit de créer une nouvelle sous-classe :
 
 \begin{lstlisting}[language=Java]
 public class Circle extends Shape {
@@ -3450,12 +2418,10 @@ public class Triangle extends Shape {
 }
 \end{lstlisting}
 
-Pour calculer l'aire totale d'un tableau de formes, on peut créer une méthode
-statique qui itère et appelle \texttt{calculateArea()} sur chaque forme :
+On peut alors écrire des méthodes génériques :
 
 \begin{lstlisting}[language=Java]
 class ShapeUtils {
-    // Methode statique pour calculer l'aire totale
     public static double calculateTotalArea(Shape[] shapes) {
         double totalArea = 0.0;
         for (Shape shape : shapes) {
@@ -3476,19 +2442,12 @@ class ShapeUtils {
 }
 \end{lstlisting}
 
-Cette méthode reste valable même si vous ajoutez de nouvelles formes plus tard.
+L’ajout d’une nouvelle forme ne nécessite pas de modifier \texttt{ShapeUtils} : il suffit de créer une nouvelle sous-classe de \texttt{Shape}.
 
 \section{Interfaces}
 \label{sec:interfaces}
 
-Une interface en Java est une classe entièrement abstraite : aucune de ses
-méthodes n'a d'implémentation concrète. Les interfaces regroupent des méthodes
-vides qui spécifient ce qu'une classe doit faire, pas comment elle le fait.
-
-Un avantage des interfaces par rapport aux classes abstraites est qu'une classe
-peut en implémenter plusieurs. Java ne permet pas d'étendre plusieurs classes.
-Les interfaces offrent donc une flexibilité supérieure, même si elles ne
-permettent pas autant de factorisation du code.
+Une interface est un type entièrement abstrait : elle spécifie \emph{ce que} doivent faire les classes qui l’implémentent, pas \emph{comment}.
 
 \begin{lstlisting}[language=Java]
 public interface Camera {
@@ -3500,8 +2459,13 @@ public interface MediaPlayer {
     void playAudio();
     void playVideo();
 }
+\end{lstlisting}
 
+Une classe peut implémenter plusieurs interfaces (contrairement à l’héritage de classes) :
+
+\begin{lstlisting}[language=Java]
 public class Smartphone implements Camera, MediaPlayer {
+
     @Override
     public void takePhoto() {
         System.out.println("Taking a photo");
@@ -3524,10 +2488,12 @@ public class Smartphone implements Camera, MediaPlayer {
 }
 \end{lstlisting}
 
+Les interfaces offrent une grande flexibilité et encouragent la conception modulaire.
+
 \section{Délégation}
 \label{sec:delegation}
 
-Considérons la classe \texttt{Book} suivante :
+Considérons une classe \texttt{Book} :
 
 \begin{lstlisting}[language=Java]
 public class Book {
@@ -3541,19 +2507,13 @@ public class Book {
         this.publicationYear = year;
     }
 
-    // ... getters, setters, et autres methodes ...
+    // getters, setters, ...
 }
 \end{lstlisting}
 
-Nous voulons trier une collection de livres par titre. On peut le faire en
-implémentant l'interface \texttt{Comparable}, qui impose de définir
-\texttt{compareTo()}. Cette méthode s'appuie sur \texttt{String.compareTo()}.
+On veut trier des livres par titre. Une première approche : implémenter \texttt{Comparable<Book>} :
 
 \begin{lstlisting}[language=Java]
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class Book implements Comparable<Book> {
     final String title;
     final String author;
@@ -3569,34 +2529,17 @@ public class Book implements Comparable<Book> {
     public int compareTo(Book other) {
         return this.title.compareTo(other.title);
     }
-
-    public static void main(String[] args) {
-        List<Book> books = new ArrayList<>();
-        books.add(new Book("The Great Gatsby", "F. Scott Fitzgerald", 1925));
-        books.add(new Book("Moby Dick", "Herman Melville", 1851));
-        books.add(new Book("1984", "George Orwell", 1949));
-        Collections.sort(books);
-        // tri par titre grace a Comparable
-        for (Book book : books) {
-            System.out.println(book.getTitle());
-        }
-    }
 }
 \end{lstlisting}
 
-Imaginons que ces livres soient affichés sur un site web. On veut pouvoir
-trier non seulement par titre, mais aussi par auteur ou par année. Problème :
-\texttt{Comparable} impose un seul \og ordre naturel \fg{}, ce qui rend difficile
-l'ajout de critères.
+\begin{lstlisting}[language=Java]
+List<Book> books = new ArrayList<>();
+// ... ajout de livres ...
+Collections.sort(books); // tri par titre
+\end{lstlisting}
 
-Un principe important en conception orientée objet est le \emph{principe
-Open/Closed} (OCP) : un module doit être ouvert à l'extension mais fermé à la
-modification. Le \emph{pattern de délégation} permet d'améliorer le design.
-Avec \texttt{Comparator}, l'algorithme de tri délègue la comparaison à un
-objet, ce qui permet d'ajouter des critères sans modifier la classe \texttt{Book}
-ni l'algorithme de tri.
-
-Voici trois comparateurs, un par critère :
+Mais si l’on veut trier aussi par auteur ou par année, une unique méthode \texttt{compareTo} ne suffit plus.  
+On utilise alors le \emph{design pattern de délégation} avec l’interface \texttt{Comparator} :
 
 \begin{lstlisting}[language=Java]
 import java.util.Comparator;
@@ -3618,105 +2561,38 @@ public class AuthorComparator implements Comparator<Book> {
 public class YearComparator implements Comparator<Book> {
     @Override
     public int compare(Book b1, Book b2) {
-        return Integer.compare(b1.getPublicationYear(), b2.getPublicationYear());
+        return Integer.compare(b1.getPublicationYear(),
+                               b2.getPublicationYear());
     }
 }
 \end{lstlisting}
-
-On peut alors trier par titre, auteur ou année en fournissant le comparateur :
 
 \begin{lstlisting}[language=Java]
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class Main {
-    public static void main(String[] args) {
-        List<Book> books = new ArrayList<>();
-        books.add(new Book("The Great Gatsby", "F. Scott Fitzgerald", 1925));
-        books.add(new Book("Moby Dick", "Herman Melville", 1851));
-        books.add(new Book("1984", "George Orwell", 1949));
-        Collections.sort(books, new TitleComparator());
-        // tri par titre
-        Collections.sort(books, new AuthorComparator());
-        // tri par auteur
-        Collections.sort(books, new YearComparator());
-        // tri par annee
-    }
-}
+Collections.sort(books, new TitleComparator());
+Collections.sort(books, new AuthorComparator());
+Collections.sort(books, new YearComparator());
 \end{lstlisting}
 
-\paragraph{Exercice}
+Ici, l’algorithme de tri délègue la comparaison à un objet \texttt{Comparator}. On peut ajouter de nouveaux critères sans modifier \texttt{Book} ni \texttt{Collections.sort} : cela illustre le principe Open/Closed.
 
-Vous développez un système de gestion de documents. La classe \texttt{Document}
-contient le contenu et vous voulez offrir une capacité d'impression en
-déléguant cette responsabilité, pour respecter le principe de responsabilité
-unique. Complétez le code :
+\paragraph{Exercice (délégation)}
 
-\begin{lstlisting}[language=Java]
-// The Printer interface
-interface Printer {
-    void print(String content);
-}
+On développe un système de gestion de documents. La classe \texttt{Document} contient le contenu, mais délègue l’impression à une interface \texttt{Printer} (par exemple \texttt{InkjetPrinter}, \texttt{LaserPrinter}).  
+L’objectif est de respecter le principe de responsabilité unique et de faciliter l’extension.
 
-// TODO: Implement the Printer interface for InkjetPrinter
-class InkjetPrinter ... {
-    ...
-}
-
-// TODO: Implement the Printer interface for LaserPrinter
-class LaserPrinter ... {
-    ...
-}
-
-// Document class
-class Document {
-    private String content;
-    private Printer printerDelegate;
-
-    public Document(String content) {
-        this.content = content;
-    }
-
-    // TODO: Set the printer delegate
-    public void setPrinterDelegate(...) {
-        ...
-    }
-
-    // TODO: Print the document using the delegate
-    public void printDocument() {
-        ...
-    }
-}
-
-// Demo
-public class DelegateDemo {
-    public static void main(String[] args) {
-        Document doc = new Document("This is a sample document content.");
-        // TODO: Set the delegate to InkjetPrinter and print
-        ...
-        // TODO: Set the delegate to LaserPrinter and print
-        ...
-    }
-}
-\end{lstlisting}
+(Énoncé en code identique à la version anglaise, avec les commentaires adaptés.)
 
 \section{Observer}
 \label{sec:observer}
 
-En informatique, il est conseillé d'avoir un couplage faible entre objets (le
-contraire est souvent appelé \og spaghetti code \fg{}). Le \emph{pattern Observer}
-permet d'obtenir un couplage faible. Nous montrons d'abord son usage en GUI,
-puis son implémentation.
+Une bonne conception cherche un couplage faible entre objets.  
+Le \emph{design pattern Observer} permet à un objet (le sujet) de notifier automatiquement plusieurs observateurs des changements.
 
-\subsection{Observer sur des composants GUI}
+\subsection{Pattern Observer sur des composants GUI}
 
 
 
-En Java, les packages \texttt{swing} et \texttt{awt} facilitent la création
-d'interfaces graphiques. Swing utilise un système basé sur l'observer pour
-gérer des événements comme les clics. Dans l'exemple suivant, un bouton affiche
-\og Thank you \fg{} lorsqu'on clique :
+Les bibliothèques Swing/AWT utilisent ce principe. Exemple : un bouton qui affiche ``Thank you'' lorsqu’on clique :
 
 \begin{lstlisting}[language=Java]
 import javax.swing.JButton;
@@ -3737,41 +2613,33 @@ public class AppWithActionListener {
         JFrame frame = new JFrame("Hello");
         frame.setSize(400, 200);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
         JButton button = new JButton("Press me!");
         button.addActionListener(new ButtonActionListener());
         frame.add(button);
+
         frame.setVisible(true);
     }
 }
 \end{lstlisting}
 
-\texttt{ActionListener} est une interface contenant une méthode
-\texttt{actionPerformed()}. Ici, \texttt{ButtonActionListener} l'implémente et
-affiche un dialogue. Cependant, rien ne se passe tant que l'on n'associe pas un
-listener au bouton via \texttt{addActionListener()}. Ainsi, à chaque clic,
-\texttt{actionPerformed()} est appelée.
+\begin{itemize}
+  \item \texttt{ActionListener} est une interface avec la méthode \texttt{actionPerformed}.
+  \item \texttt{ButtonActionListener} l’implémente.
+  \item On enregistre un observateur via \texttt{addActionListener}.
+\end{itemize}
 
-Il est important de comprendre le contrat : la méthode du listener est appelée
-quand le bouton est pressé. On parle parfois d'\og attacher un callback \fg{} ou
-de \og enregistrer un gestionnaire d'événements \fg{}. Ce principe est souvent
-résumé par la phrase : \og Don't call us, we will call you. \fg{}
-
-On peut enregistrer plusieurs listeners sur un même bouton. Par exemple, un
-second listener pourrait compter le nombre de clics. Le bouton \texttt{JButton}
-illustre ainsi l'observer vu du côté utilisateur. Voyons maintenant comment le
-mettre en œuvre pour nos propres classes.
+Le bouton appelle l’observateur lorsqu’un clic survient : \og Don’t call us, we will call you.\fg{}
 
 \subsection{Implémenter le pattern Observer}
 
 
 
-Imaginons un compte bancaire sur lequel plusieurs personnes déposent de l'argent.
-Chaque membre de la famille souhaite être alerté à chaque dépôt. Pour simplifier,
-les notifications sont affichées dans la console. Voici le code complet :
+Exemple d’un compte bancaire observable :
 
 \begin{lstlisting}[language=Java]
 public interface AccountObserver {
-    public void accountHasChanged(int newValue);
+    void accountHasChanged(int newValue);
 }
 
 class MyObserver implements AccountObserver {
@@ -3780,10 +2648,15 @@ class MyObserver implements AccountObserver {
         System.out.println("The account has changed. New value: " + newValue);
     }
 }
+\end{lstlisting}
+
+\begin{lstlisting}[language=Java]
+import java.util.LinkedList;
+import java.util.List;
 
 public class ObservableAccount {
     private int value;
-    private List<AccountObserver> observers = new LinkedList();
+    private List<AccountObserver> observers = new LinkedList<>();
 
     public void deposit(int d) {
         value += d;
@@ -3802,134 +2675,51 @@ public class ObservableAccount {
         MyObserver observerMother = new MyObserver();
         MyObserver observerGirl = new MyObserver();
         MyObserver observerBoy = new MyObserver();
+
         account.addObserver(observerFather);
         account.addObserver(observerMother);
         account.addObserver(observerGirl);
         account.addObserver(observerBoy);
+
         account.deposit(100);
-        // affiche 4X "The account has changed. New value: 100"
         account.deposit(50);
-        // affiche 4X "The account has changed. New value: 150"
     }
 }
 \end{lstlisting}
 
-Dans ce contexte, le compte bancaire est le sujet observé (la classe
-\texttt{ObservableAccount}). Cette classe maintient un solde, modifié par
-\texttt{deposit()}. Les observateurs sont enregistrés dans une liste
-(\texttt{LinkedList}) qui permet des ajouts rapides et des itérateurs.
+Remarques :
 
-À chaque dépôt, la valeur est mise à jour et tous les observateurs sont
-notifiés via \texttt{accountHasChanged()}. Nous ne vérifions pas les doublons
-dans la liste : c'est à l'utilisateur d'assurer l'unicité.
+\begin{itemize}
+  \item \texttt{ObservableAccount} est le sujet observé.
+  \item Les observateurs sont stockés dans une collection.
+  \item À chaque dépôt, tous les observateurs sont notifiés.
+\end{itemize}
 
-Notez que l'ordre de notification dépend de l'ordre d'enregistrement, car
-nous utilisons une liste. Mais l'utilisateur ne doit pas faire l'hypothèse que
-cet ordre est garanti : une autre collection (par exemple un ensemble) pourrait
-changer l'ordre.
+\paragraph{Exercice (Observer + Swing)}
 
-\paragraph{Exercice}
+On vous fournit une application \texttt{MessageApp} avec :
 
-Dans cet exercice, vous utiliserez le pattern Observer avec Java Swing.
-L'application \texttt{MessageApp} fournit une interface graphique simple :
-les utilisateurs tapent un message et le soumettent. Ce message passe par un
-\texttt{SpellChecker} puis doit être affiché par des observateurs.
+\begin{itemize}
+  \item une zone de texte pour saisir un message,
+  \item un bouton \og Submit\fg{},
+  \item une zone de texte multi-lignes pour afficher les messages.
+\end{itemize}
 
-Votre tâche est de faire fonctionner le tout : quand un message est soumis, il
-est corrigé par le \texttt{SpellChecker}, puis ajouté à la zone de texte
-(\texttt{textArea.append(String text)}).
+Le message soumis doit passer par un \texttt{SpellChecker}, puis être diffusé à des observateurs via un sujet \texttt{MessageSubject}, et finalement être affiché dans l’UI.
 
-Il est impératif que votre conception permette de remplacer facilement le
-\texttt{SpellChecker} sans modifier \texttt{MessageApp}. De plus, la classe
-\texttt{MessageSubject} doit rester découplée de \texttt{MessageApp} : elle ne
-doit pas en dépendre ni même savoir qu'elle existe. Utilisez les interfaces
-quand c'est possible. Avec les progrès du deep learning, nous prévoyons de
-remplacer \texttt{StupidSpellChecker} par une version plus avancée : faites en
-sorte que ce changement soit simple, sans modifier vos classes.
+Contraintes :
 
-\begin{lstlisting}[language=Java]
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.List;
+\begin{itemize}
+  \item on doit pouvoir remplacer facilement le \texttt{SpellChecker} sans modifier \texttt{MessageApp},
+  \item \texttt{MessageSubject} ne doit pas dépendre directement de \texttt{MessageApp},
+  \item privilégier les interfaces pour le couplage.
+\end{itemize}
 
-public class MessageApp {
-    private JFrame frame;
-    private JTextField textField;
-    private JTextArea textArea;
-    private JButton submitButton;
-
-    public MessageApp() {
-        frame = new JFrame("Observer Pattern with Swing");
-        textField = new JTextField(16);
-        textArea = new JTextArea(5, 20);
-        submitButton = new JButton("Submit");
-        frame.setLayout(new java.awt.FlowLayout());
-        frame.add(textField);
-        frame.add(submitButton);
-        frame.add(new JScrollPane(textArea));
-        // Hint: add an actionListner to the submitButon
-        // Hint: use textField.getText() to retrieve the text
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new MessageApp();
-            }
-        });
-    }
-}
-
-interface SpellChecker {
-    String correct(String sentence);
-}
-
-class StupidSpellChecker implements SpellChecker {
-    public String correct(String sentence) {
-        return sentence;
-    }
-}
-
-interface MessageObserver {
-    void updateMessage(String message);
-}
-
-class MessageSubject {
-    private List<MessageObserver> observers = new ArrayList<>();
-    private String message;
-
-    public void addObserver(MessageObserver observer) {
-        observers.add(observer);
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-        notifyAllObservers();
-    }
-
-    private void notifyAllObservers() {
-        for (MessageObserver observer : observers) {
-            observer.updateMessage(message);
-        }
-    }
-}
-\end{lstlisting}
+Le code fourni (interfaces \texttt{SpellChecker}, \texttt{MessageObserver}, classe \texttt{MessageSubject}, etc.) doit être complété en appliquant rigoureusement le pattern Observer.
 
 % Fin du chapitre 2
 \chapter{Tests unitaires}
 \label{chap:unit-testing}
-\chapter{Programmation orientée objet}
-\label{chap:oopl}
-
-\section{Notions de base}
-\label{sec:oopl-basics}
-
-\subsection{Créer vos propres objets}
-
 
 \section{Tests logiciels}
 \label{sec:software-testing}
@@ -4042,15 +2832,6 @@ Nous testons un logiciel afin de vérifier qu'il produit les bons résultats (ex
 En général, un programme comme notre méthode \texttt{division()} prend une ou plusieurs valeurs en entrée et
 produit une sortie. L'ensemble des valeurs d'entrée possibles s'appelle le \emph{domaine d'entrée}. Tester la méthode
 avec toutes les valeurs possibles serait l'idéal, mais pratiquement impossible.
-
-En pratique, on ne teste qu'un petit nombre de valeurs d'entrée, en espérant que
-le logiciel fonctionne aussi pour les autres. Par exemple, si l'appel
-\texttt{division(6, 3)} donne le bon résultat, on suppose que
-\texttt{division(12, 6)} est aussi correct. À l'inverse, si le résultat pour
-6 et 3 est incorrect, on sait qu'il y a un bug à corriger.
-
-Cela signifie-t-il qu'il faut choisir des nombres au hasard ? Non, on peut
-faire mieux :
 
 Cela nous amène à une approche plus intelligente :
 
