@@ -500,6 +500,9 @@ c++;
 System.out.println(c); // affiche 'b'
 \end{lstlisting}
 
+Vous trouverez plus d'informations sur Unicode sur
+\url{https://en.wikipedia.org/wiki/Unicode}.
+
 \subsection{Conversions de type (cast)}
 
 
@@ -541,6 +544,9 @@ System.out.println("Area of disk: " + area);
 System.out.println("Radius of disk: " + radius);
 \end{lstlisting}
 
+La documentation complète de la classe \texttt{Math} est disponible à l'adresse
+\url{https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Math.html}.
+
 \subsection{Qu'est-ce qu'une variable ? Modèle mental}
 
 
@@ -550,10 +556,51 @@ votre programme atteint une ligne où une variable est déclarée, la JVM réser
 une petite partie de la mémoire principale (RAM) de votre ordinateur pour
 stocker la valeur de cette variable.
 
+Vous pouvez l'imaginer ainsi :
+
+\begin{center}
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\textbf{Code Java} & \textbf{En mémoire pendant l'exécution} \\
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Java]
+int a = 3;
+int b = 4;
+\end{lstlisting}
+\end{minipage}
+&
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}
+a: 3
+b: 4
+\end{lstlisting}
+\end{minipage}
+\end{tabular}
+\end{center}
+
 Lorsque vous affectez le contenu d'une variable à une autre, la valeur est
 copiée. Il en va de même pour les paramètres de méthodes : lorsqu'une méthode
 est appelée avec des arguments, leurs valeurs sont copiées dans les variables
 paramètres de la méthode appelée.
+
+Par exemple :
+
+\begin{center}
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\textbf{Code Java} & \textbf{En mémoire pendant l'exécution} \\
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Java]
+a = b;
+\end{lstlisting}
+\end{minipage}
+&
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}
+a: 4
+b: 4
+\end{lstlisting}
+\end{minipage}
+\end{tabular}
+\end{center}
 
 Considérez le programme suivant :
 
@@ -664,6 +711,9 @@ Le paramètre \texttt{a} masque (\emph{shadow}) la variable de classe
 \texttt{a} dans le corps de la méthode \texttt{increment}. Si vous devez malgré
 tout accéder à la variable de classe, vous pouvez écrire :
 
+\emph{Conseil :} évitez autant que possible le masquage, car il peut facilement
+entraîner des erreurs de compréhension.
+
 \begin{lstlisting}[language=Java]
 public class Main {
 
@@ -719,10 +769,46 @@ La taille d'un tableau est fixe : on ne peut pas ajouter ou supprimer des
 Une variable de type tableau ne contient pas directement les éléments ; elle
 contient une \emph{référence} vers les données du tableau. Lorsqu'on écrit :
 
+\begin{center}
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\textbf{Code Java} & \textbf{En mémoire pendant l'exécution} \\
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Java]
+int[] a = new int[4];
+\end{lstlisting}
+\end{minipage}
+&
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}
+a -> [0, 0, 0, 0]
+\end{lstlisting}
+\end{minipage}
+\end{tabular}
+\end{center}
+
 \begin{lstlisting}[language=Java]
 int[] a = new int[4];
 int[] b = a;
 \end{lstlisting}
+
+\begin{center}
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\textbf{Code Java} & \textbf{En mémoire pendant l'exécution} \\
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Java]
+int[] a = new int[4];
+int[] b = a;
+\end{lstlisting}
+\end{minipage}
+&
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}
+a -> [0, 0, 0, 0]
+b -> [0, 0, 0, 0]
+\end{lstlisting}
+\end{minipage}
+\end{tabular}
+\end{center}
 
 \texttt{a} et \texttt{b} référencent le même tableau. Modifier via
 \texttt{b} affecte aussi ce que l'on voit via \texttt{a} :
@@ -864,6 +950,23 @@ Attention : si le corps de la boucle contient plus d'une instruction, il doit
 être entouré d'accolades \texttt{\{...\}}. Il est fortement recommandé de
 toujours utiliser les accolades, même pour une seule instruction.
 
+Si vous oubliez les accolades, seule la première instruction appartient
+vraiment à la boucle, quel que soit l'indentation :
+
+\begin{lstlisting}[language=Java]
+int sum = 0;
+int i = 0;
+while (i < 10)
+    // oops, on a oublie les accolades
+    sum += i; // cette instruction est DANS la boucle
+    System.out.println("Nearly there"); // cette instruction est HORS boucle
+    i++; // cette instruction est HORS boucle
+System.out.println("The sum is " + sum);
+\end{lstlisting}
+
+Cela vaut aussi pour les autres boucles et pour les instructions
+\texttt{if/else}.
+
 \subsection{Boucles \texttt{for} simples}
 
 
@@ -880,6 +983,10 @@ for (int elem : myArray) {
 System.out.println("The sum is " + sum);
 \end{lstlisting}
 
+La boucle \texttt{for} s'exécute autant de fois qu'il y a d'éléments dans le
+tableau, et la variable \texttt{elem} prend successivement la valeur de chaque
+élément.
+
 \subsection{Boucles \texttt{for} complexes}
 
 
@@ -895,6 +1002,19 @@ for (int i = 0; i < 10; i++) {
 System.out.println("The sum is " + sum);
 \end{lstlisting}
 
+La première ligne du \texttt{for} est composée de trois éléments :
+
+\begin{enumerate}
+  \item une instruction exécutée au démarrage (ici : \texttt{int i = 0}) ;
+  \item une expression évaluée \emph{avant} chaque itération ; si elle est
+        fausse, la boucle s'arrête (ici : \texttt{i < 10}) ;
+  \item une instruction exécutée \emph{après} chaque itération
+        (ici : \texttt{i++}).
+\end{enumerate}
+
+La forme complète est plus flexible car elle vous donne un contrôle fin sur le
+processus d'itération.
+
 Exemple : somme d'un élément sur deux dans un tableau :
 
 \begin{lstlisting}[language=Java]
@@ -906,12 +1026,27 @@ for (int i = 0; i < myArray.length; i += 2) {
 System.out.println("The sum is " + sum);
 \end{lstlisting}
 
+Dans cet exemple, on utilise \texttt{myArray.length} pour connaître la taille
+du tableau, et l'instruction \texttt{i += 2} pour avancer de deux positions
+à chaque itération.
+
 \subsection{Arrêter une boucle, sauter des itérations}
 
 
 
-\texttt{break} permet de sortir de la boucle, \texttt{continue} de passer
-directement à l'itération suivante :
+\texttt{break} permet de sortir de la boucle :
+
+\begin{lstlisting}[language=Java]
+int sum = 0;
+for (int i = 0; i < 10; i++) {
+    sum += i;
+    if (sum > 5) {
+        break;
+    }
+}
+\end{lstlisting}
+
+\texttt{continue} permet de passer directement à l'itération suivante :
 
 \begin{lstlisting}[language=Java]
 for (int i = 0; i < 10; i++) {
@@ -922,7 +1057,26 @@ for (int i = 0; i < 10; i++) {
 }
 \end{lstlisting}
 
-À n'utiliser que s'ils rendent le code plus lisible.
+À n'utiliser que s'ils rendent le code plus lisible. Par exemple, ce code :
+
+\begin{lstlisting}[language=Java]
+for (int i = 0; i < 10; i++) {
+    if (i == 5) {
+        continue;
+    }
+    sum += i;
+}
+\end{lstlisting}
+
+est souvent moins clair que :
+
+\begin{lstlisting}[language=Java]
+for (int i = 0; i < 10; i++) {
+    if (i != 5) {
+        sum += i;
+    }
+}
+\end{lstlisting}
 
 \subsection{Instructions \texttt{if/else}}
 
@@ -947,11 +1101,17 @@ System.out.println("The number of negative values is " + countNegative);
 System.out.println("The number of positive values is " + countPositive);
 \end{lstlisting}
 
-Toujours penser aux accolades.
+Comme pour les boucles, n'oubliez pas les accolades \texttt{\{...\}} quand le
+corps de l'instruction contient plusieurs lignes. Il est recommandé de les
+utiliser systématiquement.
 
 \subsection{Opérateurs de comparaison et logiques}
 
 
+
+\noindent L'instruction \texttt{if} attend une expression booléenne, c'est-à-dire
+une expression qui vaut \texttt{true} ou \texttt{false}. Les opérateurs
+booléens sont très proches de ceux de Python :
 
 \begin{lstlisting}[language=Java]
 boolean b1 = 3 < 4;     // <, >, <=, >=, ==, !=
@@ -971,11 +1131,33 @@ int x = 0, y = 0;
 char[] directions = new char[]{'N', 'S', 'S', 'E', 'E', 'W'};
 
 for (char c : directions) {
+    if (c == 'N') {
+        y++; // on va vers le Nord
+    } else if (c == 'S') {
+        y--; // on va vers le Sud
+    } else if (c == 'W') {
+        x--; // on va vers l'Ouest
+    } else if (c == 'E') {
+        x++; // on va vers l'Est
+    } else {
+        System.out.println("Unknown direction");
+    }
+    System.out.println("The new position is " + x + " , " + y);
+}
+\end{lstlisting}
+
+Java propose une instruction \texttt{switch} qui rend ce code plus compact :
+
+\begin{lstlisting}[language=Java]
+int x = 0, y = 0;
+char[] directions = new char[]{'N', 'S', 'S', 'E', 'E', 'W'};
+
+for (char c : directions) {
     switch (c) {
-        case 'N' -> { y++; }
-        case 'S' -> { y--; }
-        case 'W' -> { x--; }
-        case 'E' -> { x++; }
+        case 'N' -> { y++; } // Nord
+        case 'S' -> { y--; } // Sud
+        case 'W' -> { x--; } // Ouest
+        case 'E' -> { x++; } // Est
         default -> { System.out.println("Error! Unknown direction"); }
     }
     System.out.println("The new position is " + x + " , " + y);
@@ -983,7 +1165,29 @@ for (char c : directions) {
 \end{lstlisting}
 
 Cette syntaxe avec \texttt{->} nécessite Java~14 ou plus récent. Pour les
-versions plus anciennes, il faut utiliser \texttt{case} avec \texttt{break}.
+versions plus anciennes, il faut utiliser \texttt{case} avec \texttt{break} :
+
+\begin{lstlisting}[language=Java]
+switch (c) {
+    case 'N':
+        y++;
+        break; // sans break, les effets sont inattendus
+    case 'S':
+        y--;
+        break;
+    case 'W':
+        x--;
+        break;
+    case 'E':
+        x++;
+        break;
+    default:
+        System.out.println("Error! Unknown direction");
+}
+\end{lstlisting}
+
+Comme Java~8 est encore largement utilisé, il est utile de connaître les deux
+syntaxes.
 
 \subsection{Chaînes de caractères}
 
@@ -999,7 +1203,22 @@ String s3 = s1 + "---" + s2 + 12345;
 System.out.println(s3);
 \end{lstlisting}
 
-La classe \texttt{String} propose de nombreuses méthodes utiles, par exemple :
+La classe \texttt{String} propose de nombreuses méthodes utiles. Si vous
+consultez la documentation à l'adresse
+\url{https://docs.oracle.com/en/java/javase/21/docs//api/java.base/java/lang/String.html},
+vous verrez que certaines méthodes sont \emph{statiques} et d'autres non. Par
+exemple, la méthode statique \texttt{valueOf} transforme une valeur numérique
+en chaîne :
+
+\begin{lstlisting}[language=Java]
+double x = 1.234;
+String s = String.valueOf(x);
+System.out.println(s);
+\end{lstlisting}
+
+La plupart des méthodes de \texttt{String} ne sont pas statiques : elles
+s'appellent sur une chaîne ou une variable de type \texttt{String}. Voici des
+méthodes courantes :
 
 \begin{lstlisting}[language=Java]
 String s = "Hello world";
@@ -1017,18 +1236,55 @@ Pour convertir une chaîne en entier :
 int i = Integer.parseInt("1234");
 \end{lstlisting}
 
+Des méthodes similaires existent dans \texttt{Long}, \texttt{Float},
+\texttt{Double}, etc. Toutes ces classes sont définies dans le package
+\texttt{java.lang}, dont la documentation est disponible à l'adresse
+\url{https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/package-summary.html}.
+
+Vous pourriez vous demander pourquoi on n'importe pas explicitement
+\texttt{Math}, \texttt{Integer} ou \texttt{String} dans nos exemples : c'est
+parce que \texttt{java.lang} est le seul package importé automatiquement par le
+compilateur Java.
+
 \subsection{Modèle mental pour les chaînes}
 
 
 
 Comme les tableaux, les variables \texttt{String} contiennent des références.
+Vous pouvez l'imaginer ainsi :
+
+\begin{center}
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\textbf{Code Java} & \textbf{En mémoire pendant l'exécution} \\
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}[language=Java]
+String a = "Hello";
+\end{lstlisting}
+\end{minipage}
+&
+\begin{minipage}[t]{0.45\textwidth}
+\begin{lstlisting}
+a -> "Hello"
+\end{lstlisting}
+\end{minipage}
+\end{tabular}
+\end{center}
 
 \subsection{Comparer des valeurs}
 
 
 
-Pour les types primitifs, \texttt{==} compare les valeurs. Pour les tableaux et
-les chaînes, \texttt{==} compare les références, pas le contenu :
+Pour les types primitifs, \texttt{==} compare les valeurs :
+
+\begin{lstlisting}[language=Java]
+int i = 3;
+if (i == 3) {
+    System.out.println("They are the same!");
+}
+\end{lstlisting}
+
+Pour les tableaux et les chaînes, \texttt{==} compare les références, pas le
+contenu :
 
 \begin{lstlisting}[language=Java]
 int[] a = {1, 2, 3};
@@ -1039,6 +1295,9 @@ int[] c = a;
 System.out.println(a == c); // true
 \end{lstlisting}
 
+Comparer des tableaux ou des chaînes avec \texttt{==} est une erreur fréquente :
+rappelez-vous que cela compare les références, pas le contenu.
+
 Pour comparer le contenu de deux chaînes, on utilise \texttt{equals} :
 
 \begin{lstlisting}[language=Java]
@@ -1047,15 +1306,48 @@ String s2 = "Hello1234";
 System.out.println(s1.equals(s2)); // true
 \end{lstlisting}
 
-Pour les tableaux, on utilise \texttt{Arrays.equals} de
-\texttt{java.util.Arrays}.
+Pour les tableaux, on utilise \texttt{Arrays.equals}, une méthode statique de
+\texttt{java.util.Arrays}. Voici le code complet :
+
+\begin{lstlisting}[language=Java]
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        int[] a = {1, 2, 3};
+        int[] b = {1, 2, 3};
+        System.out.println(Arrays.equals(a, b)); // true
+    }
+}
+\end{lstlisting}
+
+La classe \texttt{Arrays} contient de nombreuses méthodes utiles pour les
+tableaux, par exemple pour initialiser tous les éléments, copier un tableau ou
+convertir un tableau en chaîne. Consultez la documentation :
+\url{https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Arrays.html}.
+
+Vous pourriez vous demander pourquoi on doit écrire
+\texttt{import java.util.Arrays} alors qu'on n'a pas eu besoin d'importer
+\texttt{Math}, \texttt{Integer} ou \texttt{String} : c'est parce que ces
+classes appartiennent à \texttt{java.lang}, le seul package importé
+automatiquement.
 
 \subsection{Énumérations}
 
 
 
-Les \texttt{enum} définissent un ensemble de constantes typées. On peut les
-utiliser avec \texttt{switch} ou \texttt{==}. Exemple (directions) :
+Les \texttt{enum} définissent un ensemble de constantes typées (des valeurs
+immuables, similaires à des variables \texttt{final}). Elles améliorent la
+lisibilité et permettent de regrouper des valeurs nommées dans un espace de
+noms dédié.
+
+Il est pratique d'utiliser \texttt{switch} pour réagir à une valeur d'énumération.
+Comme il n'existe qu'une seule instance de chaque constante dans la JVM, vous
+pouvez aussi comparer les valeurs avec \texttt{==}.
+
+Reprenons l'exemple des directions, mais avec une \texttt{enum} plutôt que des
+\texttt{char}. Le code devient plus sûr, car il est impossible d'utiliser une
+direction qui n'appartient pas à la liste.
 
 \begin{lstlisting}[language=Java]
 public class DirectionFollower {
@@ -1064,6 +1356,23 @@ public class DirectionFollower {
         NORTH, EAST, SOUTH, WEST;
     }
 
+    /**
+     * Calcule les coordonnees finales apres une serie de mouvements a partir
+     * d'une position initiale.
+     *
+     * @param start Tableau de taille deux : start[0] est x, start[1] est y.
+     * @param directions Tableau de valeurs de l'enum Direction.
+     * @return Nouveau tableau de taille deux avec les coordonnees finales.
+     *
+     * Exemple :
+     * {@code
+     * int[] start = {0, 0};
+     * Direction[] directions = {Direction.NORTH, Direction.EAST,
+     *     Direction.NORTH, Direction.WEST};
+     * int[] finalCoordinates = followDirections(start, directions);
+     * // On obtient [0, 2]
+     * }
+     */
     public static int[] followDirections(int[] start, Direction[] directions) {
         int[] result = new int[]{start[0], start[1]};
 
@@ -1181,6 +1490,10 @@ public class Main {
 }
 \end{lstlisting}
 
+Dans cet exemple, \texttt{setBossOfTeam()} ne capture pas les exceptions
+éventuelles de \texttt{setBoss()}, donc l'exception est propagée à
+\texttt{main()}, où elle est enfin interceptée.
+
 \subsection{Utiliser des sous-classes d'Exception}
 
 
@@ -1254,6 +1567,10 @@ catch (Exception e) {
 }
 \end{lstlisting}
 
+Cela fonctionne parce que \texttt{catch(XYZ e)} intercepte toutes les
+exceptions de la classe \texttt{XYZ} et de ses sous-classes, tant qu'aucun
+autre \texttt{catch} ne traite un sous-type plus spécifique.
+
 \subsection{Exceptions contrôlées et non contrôlées}
 
 
@@ -1289,7 +1606,17 @@ catch (NullPointerException e) {
 
 Les exceptions non contrôlées sont des instances de \texttt{Error} ou de
 \texttt{RuntimeException} (ou de leurs sous-classes). Toutes ces classes
-dérivent de \texttt{Throwable}.
+dérivent de \texttt{Throwable}. Toute instance de \texttt{Throwable} (ou de
+ses sous-classes) peut être levée avec l'instruction \texttt{throw}.
+
+La hiérarchie de ces classes est la suivante :
+
+\begin{lstlisting}
+Throwable
+├── Exception
+│   └── RuntimeException
+└── Error
+\end{lstlisting}
 
 \subsection{Avons-nous besoin des exceptions ?}
 
@@ -1328,6 +1655,27 @@ Sans exceptions, il faut vérifier le résultat après chaque appel, ce qui alou
 le code, mais la logique peut parfois être plus explicite. Conclusion :
 utilisez les exceptions avec parcimonie.
 
+Comparez par exemple ces deux lignes :
+
+\begin{lstlisting}[language=Java]
+peter.setBoss(anna);
+peter.setBoss(peter);
+\end{lstlisting}
+
+Il n'est pas évident, à la lecture, que la seconde ne sera pas exécutée si la
+première échoue. La version sans exceptions le rend explicite :
+
+\begin{lstlisting}[language=Java]
+boolean success = peter.setBoss(anna);
+if (success) {
+    success = peter.setBoss(peter);
+}
+\end{lstlisting}
+
+Dans la pratique, on n'a pas souvent besoin de lever ses propres exceptions ;
+en revanche, on doit fréquemment en intercepter lors d'opérations d'entrée/
+sortie, comme montré dans la section suivante.
+
 \subsection{Exceptions et opérations d'entrée/sortie}
 
 
@@ -1357,6 +1705,13 @@ public class Main {
 }
 \end{lstlisting}
 
+Le constructeur de \texttt{FileReader} peut lever
+\texttt{FileNotFoundException} si le fichier n'existe pas. La méthode
+\texttt{read()} peut lever \texttt{IOException} en cas d'erreur de lecture,
+par exemple si l'utilisateur n'a pas les droits. Comme
+\texttt{FileNotFoundException} est une sous-classe de \texttt{IOException}, un
+seul \texttt{catch (IOException e)} suffit.
+
 Si \texttt{read()} lève une exception, \texttt{reader.close()} n'est pas
 appelé. On corrige avec \texttt{finally} :
 
@@ -1376,6 +1731,11 @@ catch (IOException e) {
 }
 \end{lstlisting}
 
+La JVM exécute \emph{toujours} le bloc \texttt{finally} après le bloc
+\texttt{try}, même si une exception est levée ou si le \texttt{try} contient un
+\texttt{return}. C'est pourquoi \texttt{finally} est souvent utilisé pour
+libérer des ressources (comme fermer un fichier).
+
 Java propose une forme compacte, le \emph{try-with-resources} :
 
 \begin{lstlisting}[language=Java]
@@ -1394,6 +1754,9 @@ public class Main {
     }
 }
 \end{lstlisting}
+
+Cette forme compacte est équivalente à la version précédente : le compilateur
+ajoute automatiquement un \texttt{finally} et l'appel à \texttt{close()}.
 
 \chapter{Programmation orientée objet}
 \label{chap:oopl}
